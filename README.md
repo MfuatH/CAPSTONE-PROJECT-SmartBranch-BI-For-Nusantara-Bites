@@ -1,6 +1,6 @@
 # Data Engineering Pipeline: Nusantara Coffee Shop Sales
 
-## Deskripsi Proyek
+## Deskripsi Branch
 Proyek ini merupakan bagian tahap awal (Data Preparation & Engineering) dari sistem *Machine Learning* untuk *Forecasting* Penjualan Restoran/Kafe. 
 
 Dataset mentah awal (Global Coffee Shop Sales) ditransformasi melalui proses **ETL (Extract, Transform, Load)** menjadi dataset lokal bergaya "Nusantara". Proyek ini mencakup *Data Cleaning*, *Feature Engineering*, dan *Chronological Data Splitting* agar siap dikonsumsi langsung oleh algoritma *Time-Series Forecasting*.
