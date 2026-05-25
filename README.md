@@ -1,17 +1,17 @@
-# ☕ Dataset Transformasi: Nusantara Coffee Shop Sales
+# Dataset Transformasi: Nusantara Coffee Shop Sales
 
-## 📌 Sumber Dataset (Original Source)
+## Sumber Dataset (Original Source)
 Dataset ini merupakan hasil modifikasi dan transformasi dari dataset publik:
 * **Judul Asli:** [Coffee Shop Sales](https://www.kaggle.com/datasets/ahmedabbas757/coffee-sales)
 * **Platform:** Kaggle
 * **Pemilik Data Asli:** Maven Analytics (diunggah oleh Ahmed Abbas)
 
-## 📌 Deskripsi Branch
+## Deskripsi Branch
 Proyek di *branch* ini berfokus murni pada tahapan **Data Preparation & Engineering**. Tujuan utamanya adalah melakukan proses **ETL (Extract, Transform, Load)** untuk menyulap dataset mentah bergaya *western*/global tersebut menjadi dataset lokal bergaya "Nusantara", lengkap dengan ekstraksi fitur yang siap dikonsumsi langsung oleh algoritma *Time-Series Forecasting*.
 
 ---
 
-## ⚙️ Proses Transformasi Data (Apa yang Diubah & Bagaimana?)
+## Proses Transformasi Data
 Data mentah dari Kaggle diproses menggunakan Python (Pandas & NumPy) dengan rincian perubahan sebagai berikut:
 
 ### 1. Penyesuaian Lokasi Cabang (Store Locations)
@@ -36,7 +36,7 @@ Data mentah dari Kaggle diproses menggunakan Python (Pandas & NumPy) dengan rinc
 
 ---
 
-## 🍽️ Gambaran Isi Menu Nusantara
+## Gambaran Isi Menu Nusantara
 
 Menu telah disederhanakan ke dalam beberapa kategori utama dengan kisaran harga (IDR) sebagai berikut:
 
@@ -53,7 +53,7 @@ Menu telah disederhanakan ke dalam beberapa kategori utama dengan kisaran harga 
 
 ---
 
-## 🚀 Format Output (Dataset Final)
+## Format Output (Dataset Final)
 
 Hasil dari seluruh proses di atas tersimpan di dalam folder `Dataset/` dan telah dipecah menjadi:
 1. `X_train.csv` (Fitur Latih - Masa lalu)
