@@ -20,7 +20,7 @@ Data mentah dari Kaggle diproses menggunakan Python (Pandas & NumPy) dengan rinc
 
 ### 2. Modifikasi Master Menu & Konversi Harga
 * **Apa yang diubah:** Mengganti puluhan menu Barat (seperti *Scone*, *Biscotti*, *Premium Drip*) beserta harganya menjadi menu jajanan dan kopi khas Indonesia.
-* **Bagaimana:** Menggunakan teknik *Dictionary Mapping*. Sekitar 80 nama produk lama dipetakan menjadi 40+ produk Nusantara. Produk asli yang tidak masuk dalam *mapping* secara otomatis di-*drop* (dihapus transaksinya). Harga dasar yang awalnya menggunakan Dollar diubah sepenuhnya menjadi taksiran harga Rupiah (IDR) standar kafe lokal.
+* **Bagaimana:** Menggunakan teknik *Dictionary Mapping*. Sekitar 80 nama produk lama dipetakan menjadi 40+ produk Nusantara. Produk asli yang tidak masuk dalam *mapping* secara otomatis di-*drop*. Harga dasar yang awalnya menggunakan Dollar diubah sepenuhnya menjadi taksiran harga Rupiah (IDR) standar kafe lokal.
 
 ### 3. Ekstraksi Waktu (Feature Engineering)
 * **Apa yang diubah:** Mengoptimalkan format waktu agar model *Machine Learning* bisa memahami pola penjualan temporal.
@@ -61,6 +61,6 @@ Hasil dari seluruh proses di atas tersimpan di dalam folder `Dataset/` dan telah
 3. `y_train.csv` (Target Latih)
 4. `y_test.csv` (Target Uji)
 
-**Catatan untuk Pemodelan:** Di dalam file `X_train` dan `X_test`, terdapat kolom `transaction_datetime`. Harap gunakan kolom ini sebagai **Index** atau parameter tanggal referensi saat melatih algoritma *forecasting* Anda. Target prediksi (`y`) pada proyek ini adalah total pesanan atau `transaction_qty`.
+**Catatan untuk Pemodelan:** Di dalam file `X_train` dan `X_test`, terdapat kolom `transaction_datetime`. Harap gunakan kolom ini sebagai **Index** atau parameter tanggal referensi saat melatih algoritma *forecasting*. Target prediksi (`y`) pada proyek ini adalah total pesanan atau `transaction_qty`.
 
 Silahkan sesuaikan berdasarkan kebutuhan👍
