@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TransactionController;
 
 Route::get('/', function () {
     return view('dashboard');
@@ -10,10 +11,9 @@ Route::get('/comparison', function () {
     return view('branch-comparison');
 });
 
-// 3 Rute Baru
-Route::get('/sales', function () {
-    return view('sales');
-});
+// Transaction routes
+Route::get('/riwayat-penjualan', [TransactionController::class, 'index'])->name('transactions.index');
+Route::post('/import-dataset', [TransactionController::class, 'import'])->name('import.dataset');
 
 Route::get('/settings', function () {
     return view('settings');

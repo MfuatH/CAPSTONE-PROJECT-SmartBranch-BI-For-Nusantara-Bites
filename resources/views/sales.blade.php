@@ -2,12 +2,31 @@
 
 @section('content')
 <div class="space-y-6 pb-8 relative">
+    @if(session('success'))
+    <div class="p-4 mb-4 text-sm text-emerald-800 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center gap-2">
+        <i data-lucide="check-circle" class="w-5 h-5"></i> {{ session('success') }}
+    </div>
+    @endif
+    @if(session('error'))
+    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200 flex items-center gap-2">
+        <i data-lucide="alert-circle" class="w-5 h-5"></i> {{ session('error') }}
+    </div>
+    @endif
+
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Riwayat Penjualan</h1>
             <p class="text-sm text-gray-500 mt-1">Lacak dan kelola semua transaksi dari seluruh cabang</p>
         </div>
         <div class="flex items-center gap-3">
+            <form action="{{ route('import.dataset') }}" method="POST" enctype="multipart/form-data" id="importForm" class="m-0">
+                @csrf
+                <input type="file" name="dataset" id="datasetInput" class="hidden" accept=".csv, .xlsx, .xls" onchange="document.getElementById('importForm').submit()">
+                <button type="button" onclick="document.getElementById('datasetInput').click()" class="flex items-center gap-2 px-4 py-2 bg-[#D9A168] text-white border border-[#D9A168] rounded-lg text-sm font-medium hover:bg-[#D9A168]/90 transition-colors shadow-sm">
+                    <i data-lucide="upload" class="w-4 h-4"></i> Import Dataset
+                </button>
+            </form>
+
             <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium hover:border-[#D9A168] transition-colors shadow-sm">
                 <i data-lucide="download" class="w-4 h-4"></i> Ekspor CSV
             </button>
@@ -32,47 +51,55 @@
                         <th class="py-4 px-6 border-b border-gray-200">ID Transaksi</th>
                         <th class="py-4 px-6 border-b border-gray-200">Tanggal & Waktu</th>
                         <th class="py-4 px-6 border-b border-gray-200">Cabang</th>
-                        <th class="py-4 px-6 border-b border-gray-200">Tipe Pesanan</th>
+                        <th class="py-4 px-6 border-b border-gray-200">Kategori</th>
                         <th class="py-4 px-6 border-b border-gray-200">Status</th>
                         <th class="py-4 px-6 border-b border-gray-200 text-right">Total</th>
                         <th class="py-4 px-6 border-b border-gray-200"></th>
                     </tr>
                 </thead>
                 <tbody>
+                    @forelse($transactions as $row)
                     @php
-                    $sales = [
-                    ['id' => 'INV-2026-0501', 'date' => '18 Mei 2026, 14:30', 'branch' => 'Surabaya', 'type' => 'Makan di Tempat', 'status' => 'Selesai', 'total' => 'Rp 185.000'],
-                    ['id' => 'INV-2026-0502', 'date' => '18 Mei 2026, 14:15', 'branch' => 'Bandung', 'type' => 'Pesan Antar', 'status' => 'Selesai', 'total' => 'Rp 120.000'],
-                    ['id' => 'INV-2026-0505', 'date' => '18 Mei 2026, 13:20', 'branch' => 'Semarang', 'type' => 'Pesan Antar', 'status' => 'Dibatalkan', 'total' => 'Rp 150.000'],
-                    ];
+                        // Menghitung total harga: qty * unit_price
+                        $totalPrice = $row->qty * $row->product->unit_price;
+                        $formattedTotal = 'Rp ' . number_format($totalPrice, 0, ',', '.');
+                        
+                        // Format tanggal & waktu
+                        $dateTime = \Carbon\Carbon::parse($row->transaction_date . ' ' . $row->transaction_time)->translatedFormat('d M Y, H:i');
                     @endphp
-
-                    @foreach($sales as $row)
-                    <tr onclick="openReceiptModal('{{ $row['id'] }}', '{{ $row['branch'] }}', '{{ $row['total'] }}')" class="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer group">
+                    <tr onclick="openReceiptModal('{{ $row->id }}', '{{ $row->store->location }}', '{{ $formattedTotal }}')" class="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer group">
                         <td class="py-4 px-6 font-medium text-[#D9A168] flex items-center gap-1 group-hover:underline">
-                            {{ $row['id'] }} <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            {{ $row->id }} <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                         </td>
-                        <td class="py-4 px-6 text-gray-500">{{ $row['date'] }}</td>
-                        <td class="py-4 px-6 font-medium text-gray-900">{{ $row['branch'] }}</td>
-                        <td class="py-4 px-6 text-gray-500">{{ $row['type'] }}</td>
+                        <td class="py-4 px-6 text-gray-500">{{ $dateTime }}</td>
+                        <td class="py-4 px-6 font-medium text-gray-900">{{ $row->store->location }}</td>
+                        <td class="py-4 px-6 text-gray-500">{{ $row->product->category }}</td>
                         <td class="py-4 px-6">
-                            @if($row['status'] == 'Selesai')
                             <span class="inline-flex px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-600">Selesai</span>
-                            @else
-                            <span class="inline-flex px-2.5 py-1 rounded-md text-xs font-semibold bg-red-100 text-red-600">Dibatalkan</span>
-                            @endif
                         </td>
-                        <td class="py-4 px-6 font-bold text-gray-900 text-right">{{ $row['total'] }}</td>
+                        <td class="py-4 px-6 font-bold text-gray-900 text-right">{{ $formattedTotal }}</td>
                         <td class="py-4 px-6 text-right">
                             <button class="p-1 hover:bg-gray-200 rounded-md transition-colors text-gray-500">
                                 <i data-lucide="more-vertical" class="w-4 h-4"></i>
                             </button>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="7" class="py-8 px-6 text-center text-gray-500">
+                            Belum ada data transaksi. Silakan import dataset terlebih dahulu.
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
+        
+        @if($transactions->hasPages())
+        <div class="p-4 border-t border-gray-200">
+            {{ $transactions->links('vendor.pagination.tailwind') }}
+        </div>
+        @endif
     </div>
 
     <div id="filter-drawer" class="hidden fixed inset-0 z-50 flex justify-end">
