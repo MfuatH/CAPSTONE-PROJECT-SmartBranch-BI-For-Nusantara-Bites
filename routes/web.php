@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\RawMaterialController;
 
 Route::get('/', function () {
     return view('dashboard');
@@ -19,6 +20,4 @@ Route::get('/settings', function () {
     return view('settings');
 });
 
-Route::get('/stock', function () {
-    return view('stock');
-});
+Route::get('/stok-inventaris', [RawMaterialController::class, 'index'])->name('inventory.index');

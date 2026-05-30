@@ -22,7 +22,7 @@
             <span class="font-medium text-sm">Perbandingan Cabang</span>
         </a>
 
-        <a href="/stock" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->is('stock') ? 'bg-[#D9A168]/10 text-[#D9A168]' : 'hover:bg-[#131920] hover:text-white' }}">
+        <a href="/stok-inventaris" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->is('stock') ? 'bg-[#D9A168]/10 text-[#D9A168]' : 'hover:bg-[#131920] hover:text-white' }}">
             <i data-lucide="package" class="w-5 h-5 {{ request()->is('stock') ? 'text-[#D9A168]' : 'text-gray-400 group-hover:text-white' }}"></i>
             <span class="font-medium text-sm">Stok & Inventaris</span>
         </a>

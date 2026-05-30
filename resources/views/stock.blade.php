@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="space-y-6 pb-8">
+    @if($stokMenipis > 0)
     <div class="bg-red-50 border border-red-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 shrink-0">
@@ -9,13 +10,14 @@
             </div>
             <div>
                 <h3 class="text-red-700 font-bold">Tindakan Diperlukan</h3>
-                <p class="text-sm text-red-600/80 font-medium">Terdapat bahan baku berstatus KRITIS yang perlu segera ditangani.</p>
+                <p class="text-sm text-red-600/80 font-medium">Terdapat <b>{{ $stokMenipis }}</b> bahan baku berstatus KRITIS yang perlu segera ditangani.</p>
             </div>
         </div>
         <button class="whitespace-nowrap bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors shadow-sm">
             Tinjau Item Mendesak
         </button>
     </div>
+    @endif
 
     <div class="flex items-center justify-between">
         <div>
@@ -42,34 +44,46 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @php
-                    $inventory = [
-                    ['item' => 'Daging Sapi Premium', 'branch' => 'Surabaya', 'current' => '12 kg', 'forecast' => '45 kg', 'status' => 'CRITICAL'],
-                    ['item' => 'Beras Pandan Wangi', 'branch' => 'Bandung', 'current' => '25 kg', 'forecast' => '50 kg', 'status' => 'REORDER'],
-                    ['item' => 'Ayam Kampung', 'branch' => 'Yogyakarta', 'current' => '40 ekor', 'forecast' => '60 ekor', 'status' => 'SAFE'],
-                    ];
-                    @endphp
-
-                    @foreach($inventory as $row)
+                    @forelse($rawMaterials as $item)
                     <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                        <td class="py-4 px-6 font-semibold text-gray-900">{{ $row['item'] }}</td>
-                        <td class="py-4 px-6 text-gray-500">{{ $row['branch'] }}</td>
-                        <td class="py-4 px-6 font-medium text-gray-900">{{ $row['current'] }}</td>
-                        <td class="py-4 px-6 text-gray-500">{{ $row['forecast'] }}</td>
+                        <td class="py-4 px-6 font-semibold text-gray-900">{{ $item->name }}</td>
+                        <td class="py-4 px-6 text-gray-500">{{ $item->store->location }}</td>
+                        <td class="py-4 px-6 font-medium text-gray-900">{{ $item->stock }} {{ $item->unit }}</td>
+                        <td class="py-4 px-6 text-gray-400 italic">Menunggu AI...</td>
                         <td class="py-4 px-6 text-center">
-                            @if($row['status'] == 'SAFE')
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-600"><i data-lucide="check-circle-2" class="w-3 h-3"></i> AMAN</span>
-                            @elseif($row['status'] == 'REORDER')
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-yellow-100 text-yellow-600"><i data-lucide="refresh-ccw" class="w-3 h-3"></i> PESAN ULANG</span>
+                            {{-- Logika Penentuan Status Berdasarkan Angka Stok --}}
+                            @if($item->stock > 50)
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-600">
+                                    <i data-lucide="check-circle-2" class="w-3 h-3"></i> AMAN
+                                </span>
+                            @elseif($item->stock > 10)
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-yellow-100 text-yellow-600">
+                                    <i data-lucide="refresh-ccw" class="w-3 h-3"></i> PESAN ULANG
+                                </span>
                             @else
-                            <button onclick="openStockModal('{{ $row['item'] }}')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-100 text-red-600 hover:bg-red-200"><i data-lucide="alert-circle" class="w-3 h-3"></i> KRITIS</button>
+                                <button onclick="openStockModal('{{ $item->name }}')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-100 text-red-600 hover:bg-red-200">
+                                    <i data-lucide="alert-circle" class="w-3 h-3"></i> KRITIS
+                                </button>
                             @endif
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="5" class="py-8 text-center text-gray-500">
+                            Belum ada data stok bahan baku.
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
+
+        {{-- Tambahan Paging Biar Rapi Kayak Tabel Riwayat --}}
+        @if($rawMaterials->hasPages())
+        <div class="p-4 border-t border-gray-200">
+            {{ $rawMaterials->links('vendor.pagination.tailwind') }}
+        </div>
+        @endif
     </div>
 
     <div id="stock-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
@@ -81,7 +95,7 @@
                     </div>
                     <div>
                         <h2 class="text-lg font-bold leading-tight text-gray-900">Rekomendasi Distribusi AI</h2>
-                        <p class="text-sm font-medium text-gray-500 mt-1">Item: <span id="modal-item-name" class="text-gray-900"></span></p>
+                        <p class="text-sm font-medium text-gray-500 mt-1">Item: <span id="modal-item-name" class="text-gray-900 font-bold"></span></p>
                     </div>
                 </div>
                 <div class="mt-6 p-4 rounded-xl border bg-[#D9A168]/5 border-[#D9A168]/20 text-sm font-medium text-gray-900 leading-relaxed">
@@ -89,7 +103,7 @@
                 </div>
             </div>
             <div class="p-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
-                <button onclick="document.getElementById('stock-modal').classList.add('hidden')" class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">Tutup</button>
+                <button onclick="document.getElementById('stock-modal').classList.add('hidden')" class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">Tutup</button>
             </div>
         </div>
     </div>
