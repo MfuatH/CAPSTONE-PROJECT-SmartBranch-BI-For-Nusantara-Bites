@@ -39,14 +39,21 @@
     </nav>
 
     <div class="p-6 mt-auto">
-        <div class="flex items-center gap-3 bg-[#131920] p-3 rounded-xl border border-gray-800">
-            <div class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-white font-bold">
-                AS
-            </div>
-            <div class="flex flex-col">
-                <span class="text-sm font-bold text-white">Achmad Diky</span>
-                <span class="text-xs text-gray-400">Super Admin</span>
+    <div class="flex items-center gap-3 bg-[#131920] p-3 rounded-xl border border-gray-800">
+        <div class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-white font-bold">
+            @php
+                // Logika pembuat inisial nama otomatis
+                $words = explode(' ', auth()->user()->name);
+                $initials = count($words) > 1 
+                    ? strtoupper(substr($words[0], 0, 1) . substr($words[1], 0, 1)) 
+                    : strtoupper(substr($words[0], 0, 2));
+            @endphp
+            {{ $initials }}
+        </div>
+        <div class="flex flex-col">
+                    <span class="text-sm font-bold text-white">{{ auth()->user()->name }}</span>
+                    <span class="text-xs text-gray-400">{{ str_replace('_', ' ', auth()->user()->role) }}</span>
+                </div>
             </div>
         </div>
-    </div>
 </aside>

@@ -9,7 +9,7 @@
             @else SmartBranch BI
             @endif
         </h1>
-        <p class="text-sm text-gray-500 mt-1">Selamat datang kembali, Achmad Diky Setiawan</p>
+        <p class="text-sm text-gray-500 mt-1">Selamat datang kembali, {{ auth()->user()->name }}</p>
     </div>
 
     <div class="flex items-center gap-6">
