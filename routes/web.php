@@ -1,23 +1,30 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\RawMaterialController;
 
-Route::get('/', function () {
-    return view('dashboard');
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'authenticate'])->middleware('throttle:5,1');
 });
 
-Route::get('/comparison', function () {
-    return view('branch-comparison');
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/', function () {
+        return view('dashboard');
+    });
+
+    Route::get('/riwayat-penjualan', [TransactionController::class, 'index'])->name('transactions.index');
+    Route::post('/import-dataset', [TransactionController::class, 'import'])->name('import.dataset');
+
+    Route::get('/stok-inventaris', [RawMaterialController::class, 'index'])->name('inventory.index');
+
+    Route::get('/comparison', function () {
+        return view('branch-comparison');
+    });
+
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 });
-
-// Transaction routes
-Route::get('/riwayat-penjualan', [TransactionController::class, 'index'])->name('transactions.index');
-Route::post('/import-dataset', [TransactionController::class, 'import'])->name('import.dataset');
-
-Route::get('/settings', function () {
-    return view('settings');
-});
-
-Route::get('/stok-inventaris', [RawMaterialController::class, 'index'])->name('inventory.index');

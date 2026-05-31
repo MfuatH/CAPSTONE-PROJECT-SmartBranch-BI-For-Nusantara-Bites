@@ -169,61 +169,66 @@
                     </div>
 
                     <!-- Form -->
-                    <form>
+                    <form action="{{ route('login') }}" method="POST">
+                        @csrf
+
+                        {{-- Alert Error Gagal Login --}}
+                        @error('email')
+                            <div class="mb-5 p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-semibold flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                </svg>
+                                {{ $message }}
+                            </div>
+                        @enderror
 
                         <div class="mb-5">
-
                             <label class="block mb-2 font-semibold text-sm">
                                 Email
                             </label>
-
                             <input
                                 type="email"
+                                name="email"
+                                value="{{ old('email') }}"
+                                required
                                 placeholder="Masukkan email"
                                 class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D9A168]">
-
                         </div>
 
                         <div class="mb-4">
-
                             <label class="block mb-2 font-semibold text-sm">
                                 Password
                             </label>
-
                             <input
                                 type="password"
+                                name="password"
+                                required
                                 placeholder="Masukkan password"
                                 class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D9A168]">
-
                         </div>
 
                         <div class="flex justify-between items-center mb-6">
-
-                            <label class="flex items-center gap-2 text-sm">
-
-                                <input type="checkbox">
-
+                            <label class="flex items-center gap-2 text-sm cursor-pointer">
+                                <input 
+                                    type="checkbox" 
+                                    name="remember"
+                                    class="w-4 h-4 text-[#D9A168] border-gray-300 rounded focus:ring-[#D9A168]">
                                 Remember me
-
                             </label>
 
-                            <a href="forgot-password.html"
-                                class="text-[#D9A168] font-semibold text-sm">
-
+                            {{-- Link dimatikan pakai alert karena ini aplikasi internal 1 pintu --}}
+                            <a href="#" 
+                            onclick="alert('Sistem Terkunci: Silakan hubungi Admin IT Pusat untuk mereset kredensial Anda.'); return false;"
+                            class="text-[#D9A168] font-semibold text-sm hover:underline">
                                 Forgot Password?
-
                             </a>
-
                         </div>
 
                         <button
                             type="submit"
-                            class="w-full bg-[#D9A168] hover:bg-[#c99058] text-white py-3 rounded-xl font-bold transition">
-
+                            class="w-full bg-[#D9A168] hover:bg-[#c99058] text-white py-3 rounded-xl font-bold transition shadow-sm">
                             Sign In
-
                         </button>
-
                     </form>
 
                 </div>

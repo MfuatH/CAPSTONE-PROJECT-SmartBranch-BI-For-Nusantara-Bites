@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Shuchkin\SimpleXLSX;
+use App\Models\User; // <-- Wajib dipanggil model User-nya
 use App\Models\Store;
 use App\Models\Product;
 use App\Models\Transaction;
@@ -14,6 +15,19 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->command->info('Mencetak akun Super Admin...');
+        
+        User::updateOrCreate(
+            ['email' => 'admin@nusantara.com'],
+            [
+                'name'      => 'Admin Pusat',
+                'password'  => bcrypt('password123'),
+                'role'      => 'Super_Admin',
+                'is_active' => true,
+            ]
+        );
+        $this->command->info('Akun Admin berhasil dibuat! (admin@nusantara.com / password123)');
+
         $this->command->info('Mulai ritual narik 5.000 data dari Excel... Sabar ya!');
 
         $file = storage_path('app/private/Coffee_Shop_Sales_Nusantara_Clean.xlsx');
@@ -77,7 +91,7 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
 
-            $this->command->info('Semua data dummy berhasil disiapkan! Gas cek UI!');
+            $this->command->info('Semua data dummy & akun berhasil disiapkan! Gas cek UI!');
 
         } else {
             $this->command->error(SimpleXLSX::parseError());
