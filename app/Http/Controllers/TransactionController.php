@@ -11,17 +11,20 @@ use Shuchkin\SimpleXLSX;
 
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = Transaction::with(['store', 'product'])
-            ->when(request()->query('branch_id'), function ($query, $branchId) {
-                $query->where('store_id', $branchId);
-            })
-            ->orderBy('transaction_date', 'desc')
-            ->orderBy('transaction_time', 'desc')
-            ->paginate(10)
-            ->withQueryString();
+        $search = $request->input('search');
 
+        $query = Transaction::with(['store', 'product'])
+            ->orderBy('transaction_date', 'desc')
+            ->orderBy('transaction_time', 'desc');
+
+        if ($search) {
+            $query->where('id', 'like', '%' . $search . '%');
+        }
+        
+        $transactions = $query->paginate(10)->appends(['search' => $search]);
+        
         return view('sales', compact('transactions'));
     }
 
