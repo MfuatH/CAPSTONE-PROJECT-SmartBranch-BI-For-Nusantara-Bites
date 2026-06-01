@@ -13,37 +13,39 @@
     </div>
 
     <div class="flex items-center gap-6">
-        <div class="relative group hidden md:block">
-            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"></i>
-            <input
-                type="text"
-                placeholder="Cari cabang, metrik..."
-                class="pl-10 pr-4 py-2.5 rounded-lg bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#D9A168]/20 focus:border-[#D9A168] transition-all w-64 shadow-sm" />
-        </div>
-
+        @if(request()->is('stok-inventaris') || request()->is('riwayat-penjualan'))
         <div class="relative" id="branch-dropdown-container">
+            @php
+                $currentUrl = url()->current();
+                $currentQuery = request()->query();
+                $queryWithoutBranch = request()->except('branch_id');
+            @endphp
+
             <button
                 onclick="document.getElementById('branch-dropdown-menu').classList.toggle('hidden')"
                 class="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2.5 rounded-lg shadow-sm cursor-pointer hover:border-[#D9A168]/50 transition-colors">
-                <span class="text-sm font-medium text-gray-700" id="selected-branch-text">Semua Cabang</span>
+                <span class="text-sm font-medium text-gray-700" id="selected-branch-text">{{ $selectedBranchName ?? 'Semua Cabang' }}</span>
                 <i data-lucide="chevron-down" class="text-gray-500 w-4 h-4"></i>
             </button>
 
             <div id="branch-dropdown-menu" class="hidden absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg py-1.5 z-50">
-                @foreach(['Semua Cabang', 'Surabaya', 'Bandung', 'Yogyakarta', 'Semarang', 'Malang'] as $branch)
-                <div
-                    onclick="document.getElementById('selected-branch-text').innerText = '{{ $branch }}'; document.getElementById('branch-dropdown-menu').classList.add('hidden');"
-                    class="px-3 py-2 text-sm font-medium flex items-center justify-between cursor-pointer transition-colors text-gray-700 hover:bg-gray-50 hover:text-[#D9A168]">
-                    {{ $branch }}
-                </div>
+                <a href="{{ $currentUrl . (count($queryWithoutBranch) ? '?' . http_build_query($queryWithoutBranch) : '') }}"
+                    class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#D9A168] transition-colors">
+                    Semua Cabang
+                </a>
+
+                @foreach($branches as $branch)
+                    @php
+                        $branchQuery = array_merge($currentQuery, ['branch_id' => $branch->id]);
+                    @endphp
+                    <a href="{{ $currentUrl . '?' . http_build_query($branchQuery) }}"
+                        class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#D9A168] transition-colors">
+                        {{ $branch->location }}
+                    </a>
                 @endforeach
             </div>
         </div>
-
-        <button class="relative p-2.5 rounded-lg bg-white border border-gray-200 shadow-sm hover:text-[#D9A168] transition-colors">
-            <i data-lucide="bell" class="w-5 h-5 text-gray-600"></i>
-            <span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-        </button>
+        @endif
     </div>
 </header>
 

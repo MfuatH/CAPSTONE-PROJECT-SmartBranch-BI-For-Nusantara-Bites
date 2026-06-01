@@ -14,9 +14,13 @@ class TransactionController extends Controller
     public function index()
     {
         $transactions = Transaction::with(['store', 'product'])
+            ->when(request()->query('branch_id'), function ($query, $branchId) {
+                $query->where('store_id', $branchId);
+            })
             ->orderBy('transaction_date', 'desc')
             ->orderBy('transaction_time', 'desc')
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return view('sales', compact('transactions'));
     }

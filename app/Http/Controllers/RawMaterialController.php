@@ -11,14 +11,23 @@ class RawMaterialController extends Controller
     public function index()
     {
         $rawMaterials = RawMaterial::with('store')
+            ->when(request()->query('branch_id'), function ($query, $branchId) {
+                $query->where('store_id', $branchId);
+            })
             ->orderBy('store_id', 'asc')
             ->orderBy('name', 'asc')
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
-        $totalItem = RawMaterial::count();
-        $totalStokFisik = RawMaterial::sum('stock');
-        
-        $stokMenipis = RawMaterial::where('stock', '<=', 10)->count(); 
+        $totalItem = RawMaterial::when(request()->query('branch_id'), function ($query, $branchId) {
+                $query->where('store_id', $branchId);
+            })->count();
+        $totalStokFisik = RawMaterial::when(request()->query('branch_id'), function ($query, $branchId) {
+                $query->where('store_id', $branchId);
+            })->sum('stock');
+        $stokMenipis = RawMaterial::when(request()->query('branch_id'), function ($query, $branchId) {
+                $query->where('store_id', $branchId);
+            })->where('stock', '<=', 10)->count();
 
         return view('stock', compact('rawMaterials', 'totalItem', 'totalStokFisik', 'stokMenipis'));
     }
