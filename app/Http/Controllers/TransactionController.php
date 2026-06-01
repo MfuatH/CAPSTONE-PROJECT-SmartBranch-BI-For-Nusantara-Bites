@@ -20,11 +20,13 @@ class TransactionController extends Controller
             ->orderBy('transaction_time', 'desc');
 
         if ($search) {
-            $query->where('id', 'like', '%' . $search . '%');
+            $query->whereHas('product', function($q) use ($search) {
+                $q->where('detail', 'like', '%' . $search . '%');
+            });
         }
         
         $transactions = $query->paginate(10)->appends(['search' => $search]);
-        
+
         return view('sales', compact('transactions'));
     }
 
@@ -63,7 +65,7 @@ class TransactionController extends Controller
                         if (empty(array_filter($row)) || count($header) !== count($row)) continue;
                         
                         $data = array_combine($header, $row);
-                        $this->insertTransactionData($data); // Panggil fungsi di bawah
+                        $this->insertTransactionData($data);
                         $rowCount++;
                     }
                 } else {
