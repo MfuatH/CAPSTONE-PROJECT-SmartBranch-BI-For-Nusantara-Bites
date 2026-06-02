@@ -17,6 +17,15 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     });
 
+    Route::get('/set-branch/{id?}', function ($id = null) {
+        if ($id) {
+            session(['branch_id' => $id]); 
+        } else {
+            session()->forget('branch_id'); 
+        }
+        return back(); 
+    })->name('set.branch');
+
     Route::get('/riwayat-penjualan', [TransactionController::class, 'index'])->name('transactions.index');
     Route::post('/import-dataset', [TransactionController::class, 'import'])->name('import.dataset');
 

@@ -111,18 +111,72 @@
 
     <div id="filter-drawer" class="hidden fixed inset-0 z-50 flex justify-end">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="toggleDrawer(false)"></div>
-        <div class="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col transform transition-transform translate-x-full duration-300" id="drawer-content">
+        
+        <form action="{{ route('transactions.index') }}" method="GET" class="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col transform transition-transform translate-x-full duration-300" id="drawer-content">
+            
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
                 <div class="flex items-center gap-2">
                     <i data-lucide="filter" class="text-[#D9A168] w-5 h-5"></i>
-                    <h2 class="text-lg font-bold">Advanced Filter</h2>
+                    <h2 class="text-lg font-bold text-gray-900">Advanced Filter</h2>
                 </div>
-                <button onclick="toggleDrawer(false)" class="p-2 hover:bg-gray-100 rounded-full transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button type="button" onclick="toggleDrawer(false)" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                    <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+                </button>
             </div>
-            <div class="p-6 border-t border-gray-200 bg-white mt-auto">
-                <button onclick="toggleDrawer(false)" class="w-full py-2.5 bg-[#D9A168] text-white font-medium rounded-lg shadow-sm hover:bg-[#D9A168]/90">Terapkan Filter</button>
+
+            <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-gray-700">Pilih Cabang</label>
+                    <select name="branch_id" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#D9A168]/20 focus:border-[#D9A168]">
+                        <option value="">Semua Cabang</option>
+                        @foreach($branches as $branch)
+                            <option value="{{ $branch->id }}" {{ request('branch_id') == $branch->id ? 'selected' : '' }}>
+                                {{ $branch->location }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-gray-700">Nama Menu / Kategori</label>
+                    <input type="text" name="menu" value="{{ request('menu') }}" placeholder="Contoh: Kopi, Espresso, Teh..." class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#D9A168]/20 focus:border-[#D9A168]">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-gray-700">Rentang Harga (Rp)</label>
+                    <div class="flex items-center gap-2">
+                        <input type="number" name="min_price" value="{{ request('min_price') }}" placeholder="Minimal" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D9A168]/20 focus:border-[#D9A168]">
+                        <span class="text-gray-400">-</span>
+                        <input type="number" name="max_price" value="{{ request('max_price') }}" placeholder="Maksimal" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D9A168]/20 focus:border-[#D9A168]">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-gray-700">Rentang Waktu</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs text-gray-500 mb-1 block">Dari Tanggal</label>
+                            <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D9A168]/20 focus:border-[#D9A168] text-gray-600">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500 mb-1 block">Sampai Tanggal</label>
+                            <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D9A168]/20 focus:border-[#D9A168] text-gray-600">
+                        </div>
+                    </div>
+                </div>
+
             </div>
-        </div>
+
+            <div class="p-6 border-t border-gray-200 bg-gray-50 mt-auto flex gap-3">
+                <a href="{{ route('transactions.index') }}" class="w-1/3 py-2.5 bg-white border border-gray-200 text-gray-700 font-medium rounded-lg shadow-sm hover:bg-gray-50 text-center text-sm flex items-center justify-center transition-colors">
+                    Reset
+                </a>
+                <button type="submit" class="w-2/3 py-2.5 bg-[#D9A168] text-white font-medium rounded-lg shadow-sm hover:bg-[#c99058] transition-colors text-sm">
+                    Terapkan Filter
+                </button>
+            </div>
+        </form>
     </div>
 
     <div id="receipt-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">

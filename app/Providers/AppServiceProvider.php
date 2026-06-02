@@ -24,17 +24,15 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useTailwind();
 
-        View::composer('components.navbar', function ($view) {
-            $branches = Store::orderBy('location')->get();
-            $selectedBranchId = request()->query('branch_id');
-            $selectedBranch = $selectedBranchId ? $branches->firstWhere('id', $selectedBranchId) : null;
-            $selectedBranchName = $selectedBranch ? $selectedBranch->location : 'Semua Cabang';
-
-            $view->with([
-                'branches' => $branches,
-                'selectedBranchName' => $selectedBranchName,
-                'selectedBranchId' => $selectedBranchId,
-            ]);
+        View::composer('*', function ($view) {
+            $view->with('branches', Store::orderBy('location', 'asc')->get());
+            
+            if (session()->has('branch_id')) {
+                $branch = Store::find(session('branch_id'));
+                $view->with('selectedBranchName', $branch ? 'Cabang ' . $branch->location : 'Semua Cabang');
+            } else {
+                $view->with('selectedBranchName', 'Semua Cabang');
+            }
         });
     }
 }
