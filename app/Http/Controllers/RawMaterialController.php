@@ -4,30 +4,38 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\RawMaterial;
-use App\Models\Store;
+use Illuminate\Support\Facades\DB;
 
 class RawMaterialController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $rawMaterials = RawMaterial::with('store')
-            ->when(request()->query('branch_id'), function ($query, $branchId) {
-                $query->where('store_id', $branchId);
-            })
-            ->orderBy('store_id', 'asc')
-            ->orderBy('name', 'asc')
-            ->paginate(10)
-            ->withQueryString();
+        $branchId = $request->input('branch_id') ?? session('branch_id');
 
-        $totalItem = RawMaterial::when(request()->query('branch_id'), function ($query, $branchId) {
-                $query->where('store_id', $branchId);
-            })->count();
-        $totalStokFisik = RawMaterial::when(request()->query('branch_id'), function ($query, $branchId) {
-                $query->where('store_id', $branchId);
-            })->sum('stock');
-        $stokMenipis = RawMaterial::when(request()->query('branch_id'), function ($query, $branchId) {
-                $query->where('store_id', $branchId);
-            })->where('stock', '<=', 10)->count();
+        $query = RawMaterial::with(['stores' => function($q) use ($branchId) {
+            if ($branchId) {
+                $q->where('stores.id', $branchId);
+            }
+        }]);
+
+        if ($branchId) {
+            $query->whereHas('stores', function($q) use ($branchId) {
+                $q->where('stores.id', $branchId);
+            });
+        } else {
+            $query->has('stores');
+        }
+
+        $rawMaterials = $query->orderBy('name', 'asc')->paginate(10)->appends($request->all());
+
+        $statsQuery = DB::table('raw_material_store');
+        if ($branchId) {
+            $statsQuery->where('store_id', $branchId);
+        }
+
+        $totalItem = $statsQuery->count();
+        $totalStokFisik = $statsQuery->sum('current_stock');
+        $stokMenipis = (clone $statsQuery)->whereRaw('current_stock <= minimum_stock')->count();
 
         return view('stock', compact('rawMaterials', 'totalItem', 'totalStokFisik', 'stokMenipis'));
     }

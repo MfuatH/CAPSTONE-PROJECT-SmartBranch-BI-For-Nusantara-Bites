@@ -5,17 +5,16 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Shuchkin\SimpleXLSX;
-use App\Models\User; // <-- Wajib dipanggil model User-nya
+use App\Models\User;
 use App\Models\Store;
 use App\Models\Product;
 use App\Models\Transaction;
-use App\Models\RawMaterial;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->command->info('Mencetak akun Super Admin...');
+        $this->command->info('Membuat akun Super Admin...');
         
         User::updateOrCreate(
             ['email' => 'admin@nusantara.com'],
@@ -28,12 +27,12 @@ class DatabaseSeeder extends Seeder
         );
         $this->command->info('Akun Admin berhasil dibuat! (admin@nusantara.com / password123)');
 
-        $this->command->info('Mulai ritual narik 5.000 data dari Excel... Sabar ya!');
+        $this->command->info('Memuat 5.000 data dari Excel');
 
         $file = storage_path('app/private/Coffee_Shop_Sales_Nusantara_Clean.xlsx');
 
         if (!file_exists($file)) {
-            $this->command->error("Waduh, file excel-nya ga ketemu di storage/app/");
+            $this->command->error("File Excel tidak ditemukan di: $file. Pastikan file sudah ada dan coba lagi.");
             return;
         }
 
@@ -80,18 +79,51 @@ class DatabaseSeeder extends Seeder
             }
 
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-            $this->command->info("Mantap! $count transaksi berhasil masuk.");
+            $this->command->info("Selesai memuat $count data transaksi dari Excel!");
 
-            $this->command->info('Sekarang ngisi bahan baku buat tiap cabang...');
-            
+            $this->command->info('Menyiapkan Master Bahan Baku & Resep...');
+
+            $rawMaterials = [
+                ['name' => 'Biji Kopi Arabica', 'sku' => 'BB-001', 'unit' => 'Gram', 'price_per_unit' => 150.00, 'created_at' => now(), 'updated_at' => now()],
+                ['name' => 'Biji Kopi Robusta', 'sku' => 'BB-002', 'unit' => 'Gram', 'price_per_unit' => 120.00, 'created_at' => now(), 'updated_at' => now()],
+                ['name' => 'Susu Fresh Milk', 'sku' => 'BB-003', 'unit' => 'Mililiter', 'price_per_unit' => 25.00, 'created_at' => now(), 'updated_at' => now()],
+                ['name' => 'Gula Aren Cair', 'sku' => 'BB-004', 'unit' => 'Mililiter', 'price_per_unit' => 15.00, 'created_at' => now(), 'updated_at' => now()],
+                ['name' => 'Cup Plastik + Sedotan', 'sku' => 'BB-005', 'unit' => 'Pcs', 'price_per_unit' => 800.00, 'created_at' => now(), 'updated_at' => now()],
+            ];
+            DB::table('raw_materials')->insert($rawMaterials);
+            $materialIds = DB::table('raw_materials')->pluck('id')->toArray();
+
+            $this->command->info('Mendistribusikan stok gudang ke tiap cabang...');
             $stores = Store::all();
             foreach ($stores as $store) {
-                RawMaterial::factory(rand(8, 15))->create([
-                    'store_id' => $store->id
-                ]);
+                foreach ($materialIds as $mId) {
+                    DB::table('raw_material_store')->insert([
+                        'store_id'        => $store->id,
+                        'raw_material_id' => $mId,
+                        'current_stock'   => rand(1000, 5000),
+                        'minimum_stock'   => 500,
+                        'created_at'      => now(),
+                        'updated_at'      => now(),
+                    ]);
+                }
             }
 
-            $this->command->info('Semua data dummy & akun berhasil disiapkan! Gas cek UI!');
+            $this->command->info('Menyusun takaran buku resep untuk tiap menu...');
+            $products = Product::all();
+            foreach ($products as $product) {
+                $usedMaterials = (array) array_rand(array_flip($materialIds), rand(2, 3));
+                foreach ($usedMaterials as $mId) {
+                    DB::table('product_raw_material')->insert([
+                        'product_id'      => $product->id,
+                        'raw_material_id' => $mId,
+                        'qty_needed'      => rand(10, 150),
+                        'created_at'      => now(),
+                        'updated_at'      => now(),
+                    ]);
+                }
+            }
+
+            $this->command->info('Seed data bahan baku dan resep berhasil disiapkan!');
 
         } else {
             $this->command->error(SimpleXLSX::parseError());

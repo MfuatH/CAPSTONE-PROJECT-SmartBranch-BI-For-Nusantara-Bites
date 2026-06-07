@@ -23,6 +23,8 @@ class Product extends Model
 
     public function rawMaterials()
     {
-        return $this->hasMany(RawMaterial::class);
+        return $this->belongsToMany(RawMaterial::class, 'product_raw_material')
+                    ->withPivot('qty_needed')
+                    ->withTimestamps();
     }
 }

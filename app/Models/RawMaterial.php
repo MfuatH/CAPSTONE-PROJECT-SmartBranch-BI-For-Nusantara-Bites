@@ -10,11 +10,23 @@ class RawMaterial extends Model
     use HasFactory;
 
     protected $fillable = [
-        'store_id', 'name', 'sku', 'stock', 'unit', 'price_per_unit'
+        'name',
+        'sku',
+        'unit',
+        'price_per_unit',
     ];
 
-    public function store()
+    public function stores()
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsToMany(Store::class, 'raw_material_store')
+                    ->withPivot('current_stock', 'minimum_stock')
+                    ->withTimestamps();
+    }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'product_raw_material')
+                    ->withPivot('qty_needed')
+                    ->withTimestamps();
     }
 }
