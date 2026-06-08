@@ -69,11 +69,8 @@
                 <tbody>
                     @forelse($transactions as $row)
                     @php
-                        // Menghitung total harga: qty * unit_price
                         $totalPrice = $row->qty * $row->product->unit_price;
                         $formattedTotal = 'Rp ' . number_format($totalPrice, 0, ',', '.');
-                        
-                        // Format tanggal & waktu
                         $dateTime = \Carbon\Carbon::parse($row->transaction_date . ' ' . $row->transaction_time)->translatedFormat('d M Y, H:i');
                     @endphp
                     <tr onclick="openReceiptModal('{{ $row->id }}', '{{ $row->store->location }}', '{{ $formattedTotal }}')" class="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer group">

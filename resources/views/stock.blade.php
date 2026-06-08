@@ -40,10 +40,8 @@
                 </thead>
                 <tbody>
                     @forelse($rawMaterials as $item)
-                        {{-- Karena 1 bahan bisa ada di banyak cabang, kita loop cabangnya dari relasi --}}
                         @foreach($item->stores as $store)
                             @php
-                                // Ambil data dari tabel pivot raw_material_store
                                 $currentStock = $store->pivot->current_stock;
                                 $minStock = $store->pivot->minimum_stock;
                             @endphp
@@ -55,18 +53,15 @@
                                 </td>
                                 <td class="py-4 px-6 text-gray-400 italic">Menunggu AI...</td>
                                 <td class="py-4 px-6 text-center">
-                                    {{-- Logika Penentuan Status Cerdas (Bandingin sama Minimum Stock) --}}
                                     @if($currentStock <= $minStock)
                                         <button onclick="openStockModal('{{ $item->name }}', '{{ $store->location }}')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-100 text-red-600 hover:bg-red-200">
                                             <i data-lucide="alert-circle" class="w-3 h-3"></i> KRITIS
                                         </button>
                                     @elseif($currentStock <= $minStock * 1.5)
-                                        {{-- Kalau stok udah mepet (dibawah 1.5x minimum), warning Pesan Ulang --}}
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-yellow-100 text-yellow-600">
                                             <i data-lucide="refresh-ccw" class="w-3 h-3"></i> PESAN ULANG
                                         </span>
                                     @else
-                                        {{-- Sisa stok melimpah ruah --}}
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-600">
                                             <i data-lucide="check-circle-2" class="w-3 h-3"></i> AMAN
                                         </span>

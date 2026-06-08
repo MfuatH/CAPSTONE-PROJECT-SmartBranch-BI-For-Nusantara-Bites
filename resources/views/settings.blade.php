@@ -55,7 +55,6 @@
                 </div>
 
                 <div class="space-y-4">
-                    {{-- Loop data toko/cabang beneran hasil seeder Excel --}}
                     @forelse($stores as $store)
                     <div class="flex justify-between items-center p-4 rounded-xl border border-gray-200 bg-gray-50">
                         <div class="flex items-center gap-4">
@@ -66,7 +65,6 @@
                             </div>
                         </div>
                         
-                        {{-- Logika toggle switch mengikuti status di database --}}
                         <button onclick="toggleSwitch(this, '{{ $store->id }}')" 
                                 class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors {{ $store->status === 'Aktif' ? 'bg-[#D9A168]' : 'bg-gray-300' }}">
                             <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform {{ $store->status === 'Aktif' ? 'translate-x-6' : 'translate-x-1' }}"></span>

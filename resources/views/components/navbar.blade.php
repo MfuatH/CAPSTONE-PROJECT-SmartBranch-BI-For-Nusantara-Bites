@@ -43,7 +43,6 @@
 </header>
 
 <script>
-    // Logika menutup dropdown saat klik sembarang tempat
     window.addEventListener('click', function(e) {
         if (!document.getElementById('branch-dropdown-container').contains(e.target)) {
             document.getElementById('branch-dropdown-menu').classList.add('hidden');
