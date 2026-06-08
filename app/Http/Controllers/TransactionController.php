@@ -102,11 +102,11 @@ class TransactionController extends Controller
             }
 
             DB::commit();
-            return back()->with('success', "Mantap coy! $rowCount data berhasil diimport.");
+            return back()->with('success', "Berhasil mengimpor $rowCount transaksi.");
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Waduh, gagal import: ' . $e->getMessage());
+            return back()->with('error', "Gagal mengimpor transaksi: " . $e->getMessage());
         }
     }
 
