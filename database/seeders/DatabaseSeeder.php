@@ -102,6 +102,9 @@ class DatabaseSeeder extends Seeder
                 ['name' => 'Beras & Mie Mentah', 'sku' => 'BB-015', 'unit' => 'Gram', 'price_per_unit' => 15.00],
                 ['name' => 'Daging Ayam & Sapi Segar', 'sku' => 'BB-016', 'unit' => 'Gram', 'price_per_unit' => 120.00],
                 ['name' => 'Bumbu Dapur & Sayuran', 'sku' => 'BB-017', 'unit' => 'Gram', 'price_per_unit' => 10.00],
+                ['name' => 'Paper Cup (Small)', 'sku' => 'BB-018', 'unit' => 'Pcs', 'price_per_unit' => 300.00],
+                ['name' => 'Paper Cup (Regular)', 'sku' => 'BB-018', 'unit' => 'Pcs', 'price_per_unit' => 500.00],
+                ['name' => 'Paper Cup (Large)', 'sku' => 'BB-019', 'unit' => 'Pcs', 'price_per_unit' => 800.00],
             ];
 
             $materialMap = [];
@@ -124,8 +127,8 @@ class DatabaseSeeder extends Seeder
                     DB::table('raw_material_store')->updateOrInsert(
                         ['store_id' => $store->id, 'raw_material_id' => $mId],
                         [
-                            'current_stock'   => rand(2000, 8000),
-                            'minimum_stock'   => 500,
+                            'current_stock'   => str_contains($name, 'Cup') ? rand(5000, 10000) : rand(2000, 8000),
+                            'minimum_stock'   => str_contains($name, 'Cup') ? 1000 : 500,
                             'created_at'      => now(),
                             'updated_at'      => now(),
                         ]
@@ -155,7 +158,6 @@ class DatabaseSeeder extends Seeder
                         } else {
                             $attachData[$materialMap['Gula Pasir & Gula Batu']] = ['qty_needed' => 15];
                         }
-                        // Deteksi kalau ada unsur susu atau sanger
                         if (str_contains($namaMenu, 'susu') || str_contains($namaMenu, 'sanger') || str_contains($namaMenu, 'tarik')) {
                             $attachData[$materialMap['Susu Fresh Milk (UHT)']] = ['qty_needed' => 80];
                         }
@@ -175,7 +177,6 @@ class DatabaseSeeder extends Seeder
                             $attachData[$materialMap['Daun Teh Hitam Premium']] = ['qty_needed' => 15];
                         }
                         
-                        // Tambah gula/susu sesuai nama
                         if (!str_contains($namaMenu, 'tawar')) {
                             $attachData[$materialMap['Gula Pasir & Gula Batu']] = ['qty_needed' => 20];
                         }
@@ -194,7 +195,7 @@ class DatabaseSeeder extends Seeder
                         $attachData[$materialMap['Rempah Tradisional (Jahe/Serai)']] = ['qty_needed' => 25];
                         $attachData[$materialMap['Gula Pasir & Gula Batu']] = ['qty_needed' => 20];
                         if (str_contains($namaMenu, 'bajigur')) {
-                            $attachData[$materialMap['Susu Fresh Milk (UHT)']] = ['qty_needed' => 50]; // Anggap santan pakai stok susu sementara
+                            $attachData[$materialMap['Susu Fresh Milk (UHT)']] = ['qty_needed' => 50];
                         }
                         break;
 
@@ -232,6 +233,21 @@ class DatabaseSeeder extends Seeder
                     default:
                         $attachData[$materialMap['Bumbu Dapur & Sayuran']] = ['qty_needed' => 20];
                         break;
+                }
+
+                $isBeverage = in_array($product->type, [
+                    'Barista Espresso', 'Kopi Lokal Nusantara', 'Single Origin Indonesia',
+                    'Teh Nusantara & Klasik', 'Hot chocolate', 'Wedang & Jamu'
+                ]);
+
+                if ($isBeverage) {
+                    if (str_contains($namaMenu, 'lg')) {
+                        $attachData[$materialMap['Paper Cup (Large)']] = ['qty_needed' => 1];
+                    } elseif (str_contains($namaMenu, 'sm')) {
+                        $attachData[$materialMap['Paper Cup (Small)']] = ['qty_needed' => 1];
+                    } else {
+                        $attachData[$materialMap['Paper Cup (Regular)']] = ['qty_needed' => 1];
+                    }
                 }
 
                 foreach ($attachData as $mId => $pivotData) {
