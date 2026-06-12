@@ -25,12 +25,21 @@
             <button
                 onclick="document.getElementById('branch-dropdown-menu').classList.toggle('hidden')"
                 class="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2.5 rounded-lg shadow-sm cursor-pointer hover:border-[#D9A168]/50 transition-colors">
-                <span class="text-sm font-medium text-gray-700" id="selected-branch-text">Semua Cabang</span>
+
+                <span class="text-sm font-medium text-gray-700" id="selected-branch-text">
+                    {{ request()->is('comparison') ? 'Surabaya' : 'Semua Cabang' }}
+                </span>
+
                 <i data-lucide="chevron-down" class="text-gray-500 w-4 h-4"></i>
             </button>
 
             <div id="branch-dropdown-menu" class="hidden absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg py-1.5 z-50">
                 @foreach(['Semua Cabang', 'Surabaya', 'Bandung', 'Yogyakarta', 'Semarang', 'Malang'] as $branch)
+
+                @if(request()->is('comparison') && $branch == 'Semua Cabang')
+                @continue
+                @endif
+
                 <div
                     onclick="document.getElementById('selected-branch-text').innerText = '{{ $branch }}'; document.getElementById('branch-dropdown-menu').classList.add('hidden');"
                     class="px-3 py-2 text-sm font-medium flex items-center justify-between cursor-pointer transition-colors text-gray-700 hover:bg-gray-50 hover:text-[#D9A168]">
