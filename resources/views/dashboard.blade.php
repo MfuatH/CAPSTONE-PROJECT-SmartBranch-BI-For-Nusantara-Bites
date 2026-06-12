@@ -8,30 +8,30 @@
 
         <x-metric-card
             title="Total Pendapatan"
-            value="Rp 1.24M"
+            value="Rp {{ number_format($totalRevenue, 0, ',', '.') }}"
             subtitle="Dari semua cabang"
-            trend="+12.5%"
+            trend="+{{ $forecastTrend }}%"
             icon="dollar-sign" />
 
         <x-metric-card
             title="Forecast Bulan Depan"
-            value="Rp 1.48M"
-            subtitle="Prediksi AI"
-            trend="+18.2%"
+            value="Rp {{ number_format($forecastRevenue, 0, ',', '.') }}"
+            subtitle="Perkiraan berdasar tren"
+            trend="+{{ $forecastTrend }}%"
             icon="sparkles" />
 
         <x-metric-card
-            title="Best Branch"
-            value="Surabaya"
-            subtitle="Prediksi tertinggi"
-            trend="1963 item"
+            title="Cabang Terbaik"
+            value="{{ $bestBranchName }}"
+            subtitle="Berdasar pendapatan"
+            trend="{{ $bestBranchName !== 'Tidak ada data' ? 'Cabang terbaik' : 'N/A' }}"
             :trendIsValue="true"
             icon="map-pin" />
 
         <x-metric-card
             title="Stock Alert"
-            value="12 Produk"
-            subtitle="Perlu restock"
+            value="{{ $stockAlertCount }} Produk"
+            subtitle="Bahan perlu restock"
             trend="Urgent"
             :trendIsValue="true"
             icon="package" />
@@ -39,7 +39,7 @@
     </div>
 
     {{-- FORECAST + TOP MENU --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-1 gap-6">
 
         <div class="p-6 lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
 
@@ -58,61 +58,6 @@
             </div>
 
             <div id="forecast-chart" class="w-full h-[320px]"></div>
-
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-
-            <h2 class="text-lg font-bold text-gray-900 mb-1">
-                Top 5 Menu
-            </h2>
-
-            <p class="text-sm text-gray-500 mb-6">
-                Prediksi menu terlaris
-            </p>
-
-            @php
-            $topMenu = [
-                ['name'=>'Cappuccino','sold'=>1254,'percentage'=>95],
-                ['name'=>'Latte','sold'=>1121,'percentage'=>88],
-                ['name'=>'Espresso','sold'=>981,'percentage'=>80],
-                ['name'=>'Croissant','sold'=>810,'percentage'=>72],
-                ['name'=>'Almond Croissant','sold'=>712,'percentage'=>65]
-            ];
-            @endphp
-
-            <div class="space-y-5">
-
-                @foreach($topMenu as $item)
-
-                <div>
-
-                    <div class="flex justify-between mb-2">
-
-                        <span class="font-medium text-sm">
-                            {{ $item['name'] }}
-                        </span>
-
-                        <span class="text-xs font-bold">
-                            {{ number_format($item['sold']) }}
-                        </span>
-
-                    </div>
-
-                    <div class="h-2 bg-gray-100 rounded-full">
-
-                        <div
-                            class="h-full bg-[#D9A168] rounded-full"
-                            style="width: {{ $item['percentage'] }}%">
-                        </div>
-
-                    </div>
-
-                </div>
-
-                @endforeach
-
-            </div>
 
         </div>
 
@@ -141,7 +86,7 @@
                         </h3>
 
                         <p class="text-sm text-gray-500">
-                            Cappuccino diprediksi menjadi menu terlaris bulan depan.
+                            {{ $topProductPrediction }} diprediksi menjadi menu terlaris bulan depan.
                         </p>
                     </div>
 
@@ -159,7 +104,7 @@
                         </h3>
 
                         <p class="text-sm text-gray-500">
-                            12 produk perlu restock dalam 7 hari ke depan.
+                            {{ $stockAlertCount }} bahan perlu restock dalam 7 hari ke depan.
                         </p>
                     </div>
 
@@ -177,7 +122,7 @@
                         </h3>
 
                         <p class="text-sm text-gray-500">
-                            Surabaya diprediksi menjadi cabang terbaik.
+                            {{ $bestBranchName }} diprediksi menjadi cabang terbaik.
                         </p>
                     </div>
 
@@ -193,30 +138,22 @@
                 Branch Performance
             </h2>
 
-            @php
-            $branches = [
-                ['name'=>'Surabaya','value'=>95],
-                ['name'=>'Bandung','value'=>88],
-                ['name'=>'Semarang','value'=>82],
-                ['name'=>'Yogyakarta','value'=>75],
-                ['name'=>'Jakarta Pusat','value'=>62],
-            ];
-            @endphp
+            @php $maxSales = $branches->max('total_sales') ?: 1; @endphp
 
             <div class="space-y-5">
 
-                @foreach($branches as $branch)
+                @foreach($branches->take(5) as $branch)
 
                 <div>
 
                     <div class="flex justify-between mb-2">
 
                         <span class="text-sm font-medium">
-                            {{ $branch['name'] }}
+                            Cabang {{ $branch->location }}
                         </span>
 
                         <span class="text-sm text-gray-500">
-                            {{ $branch['value'] }}%
+                            {{ number_format($branch->total_sales, 0, ',', '.') }}
                         </span>
 
                     </div>
@@ -225,7 +162,7 @@
 
                         <div
                             class="h-full bg-[#D9A168] rounded-full"
-                            style="width: {{ $branch['value'] }}%">
+                            style="width: {{ min(100, round(($branch->total_sales / $maxSales) * 100)) }}%">
                         </div>
 
                     </div>
@@ -264,8 +201,8 @@
                     <tr class="border-b">
 
                         <th class="text-left py-3">Produk</th>
-                        <th class="text-center py-3">Forecast</th>
-                        <th class="text-center py-3">Recommended</th>
+                        <th class="text-center py-3">Cabang</th>
+                        <th class="text-center py-3">Stok Saat Ini</th>
                         <th class="text-center py-3">Status</th>
 
                     </tr>
@@ -274,37 +211,25 @@
 
                 <tbody>
 
-                    <tr class="border-b">
-
-                        <td class="py-4">Cappuccino</td>
-                        <td class="text-center">120</td>
-                        <td class="text-center">145</td>
-
-                        <td class="text-center">
-
-                            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs">
-                                Restock
-                            </span>
-
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td class="py-4">Latte</td>
-                        <td class="text-center">90</td>
-                        <td class="text-center">108</td>
-
-                        <td class="text-center">
-
-                            <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs">
-                                Safe
-                            </span>
-
-                        </td>
-
-                    </tr>
+                    @forelse($lowMaterials as $material)
+                        <tr class="border-b">
+                            <td class="py-4">{{ $material->name }}</td>
+                            <td class="text-center">{{ $material->store }}</td>
+                            <td class="text-center">{{ number_format($material->current_stock, 0, ',', '.') }}</td>
+                            <td class="text-center">
+                                @php $status = $material->current_stock <= $material->minimum_stock ? 'Restock' : 'Safe'; @endphp
+                                <span class="px-3 py-1 rounded-full text-xs {{ $status === 'Restock' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600' }}">
+                                    {{ $status }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="py-4 text-center text-gray-500">
+                                Tidak ada data inventaris bahan.
+                            </td>
+                        </tr>
+                    @endforelse
 
                 </tbody>
 
@@ -356,77 +281,35 @@
 
         <div class="grid md:grid-cols-3 gap-6">
 
-            <div class="border rounded-xl p-5">
+            @forelse($bundlePromos as $promo)
+                <div class="border rounded-xl p-5">
 
-                <h3 class="font-semibold mb-2">
-                    Bundle #1
-                </h3>
+                    <h3 class="font-semibold mb-2">
+                        {{ $promo['title'] }}
+                    </h3>
 
-                <p>Cappuccino + Lemper Ayam Bakar</p>
+                    <p>{{ $promo['pair'] }}</p>
 
-                <div class="mt-4 space-y-1 text-sm">
+                    <div class="mt-4 space-y-1 text-sm">
 
-                    <p>Harga Normal : Rp42.000</p>
+                        <p>Harga Normal : {{ $promo['normal'] }}</p>
 
-                    <p class="font-bold text-[#D9A168]">
-                        Harga Bundle : Rp37.000
-                    </p>
+                        <p class="font-bold text-[#D9A168]">
+                            Harga Bundle : {{ $promo['bundle'] }}
+                        </p>
 
-                    <p class="text-green-600">
-                        +15% Potensi Penjualan
-                    </p>
+                        <p class="text-green-600">
+                            {{ $promo['uplift'] }}
+                        </p>
 
-                </div>
-
-            </div>
-
-            <div class="border rounded-xl p-5">
-
-                <h3 class="font-semibold mb-2">
-                    Bundle #2
-                </h3>
-
-                <p>Latte + Pastel Renyah</p>
-
-                <div class="mt-4 space-y-1 text-sm">
-
-                    <p>Harga Normal : Rp41.000</p>
-
-                    <p class="font-bold text-[#D9A168]">
-                        Harga Bundle : Rp36.000
-                    </p>
-
-                    <p class="text-green-600">
-                        +12% Potensi Penjualan
-                    </p>
+                    </div>
 
                 </div>
-
-            </div>
-
-            <div class="border rounded-xl p-5">
-
-                <h3 class="font-semibold mb-2">
-                    Bundle #3
-                </h3>
-
-                <p>Espresso + Pisang Goreng</p>
-
-                <div class="mt-4 space-y-1 text-sm">
-
-                    <p>Harga Normal : Rp32.000</p>
-
-                    <p class="font-bold text-[#D9A168]">
-                        Harga Bundle : Rp29.000
-                    </p>
-
-                    <p class="text-green-600">
-                        +18% Potensi Penjualan
-                    </p>
-
+            @empty
+                <div class="border rounded-xl p-5 text-center text-gray-500 col-span-3">
+                    Tidak ada rekomendasi bundle saat ini.
                 </div>
-
-            </div>
+            @endforelse
 
         </div>
 
@@ -439,20 +322,25 @@
 <script>
 
 document.addEventListener("DOMContentLoaded", function () {
+    const forecastCategories = @json($chartCategories);
+    const historySeries = @json($historySeries);
+    const forecastSeries = @json($forecastSeries);
+    const topMenuCategories = @json($topMenu->pluck('name'));
+    const topMenuValues = @json($topMenu->pluck('total_sold'));
+    const bottomMenuCategories = @json($bottomMenu->pluck('name'));
+    const bottomMenuValues = @json($bottomMenu->pluck('total_sold'));
 
     new ApexCharts(document.querySelector("#forecast-chart"), {
-
         series: [
             {
                 name: 'History',
-                data: [4000,4500,5200,5100,6100,6800,null,null]
+                data: historySeries
             },
             {
                 name: 'Forecast',
-                data: [null,null,null,null,null,6800,7400,8100]
+                data: forecastSeries
             }
         ],
-
         chart: {
             type: 'line',
             height: 320,
@@ -460,59 +348,44 @@ document.addEventListener("DOMContentLoaded", function () {
                 show: false
             }
         },
-
         stroke: {
             width: 3,
             curve: 'smooth',
             dashArray: [0,5]
         },
-
         colors: ['#D9A168','#D9A168'],
-
         xaxis: {
-            categories: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags']
+            categories: forecastCategories
         }
-
     }).render();
 
     new ApexCharts(document.querySelector("#top-menu-chart"), {
-
         chart: {
             type: 'bar',
             height: 300
         },
-
         series: [{
-            data: [1254,1121,981,810,712]
+            data: topMenuValues
         }],
-
         colors:['#D9A168'],
-
         xaxis: {
-            categories:['Cappuccino','Latte','Espresso','Croissant','Almond']
+            categories: topMenuCategories
         }
-
     }).render();
 
     new ApexCharts(document.querySelector("#bottom-menu-chart"), {
-
         chart: {
             type: 'bar',
             height: 300
         },
-
         series: [{
-            data: [40,55,62,80,90]
+            data: bottomMenuValues
         }],
-
         colors:['#E5E7EB'],
-
         xaxis: {
-            categories:['Lemper','Pastel','Dadar','Risoles','Roti']
+            categories: bottomMenuCategories
         }
-
     }).render();
-
 });
 </script>
 

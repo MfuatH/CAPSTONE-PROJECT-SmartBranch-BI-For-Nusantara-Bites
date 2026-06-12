@@ -2,7 +2,7 @@
     <div>
         <h1 class="text-2xl font-bold text-gray-900">
             @if(request()->is('/')) Ringkasan Dasbor
-            @elseif(request()->is('comparison')) Perbandingan Cabang
+            @elseif(request()->is('comparison')) Detail Cabang
             @elseif(request()->is('stock')) Rekomendasi Stok
             @elseif(request()->is('sales')) Riwayat Penjualan
             @elseif(request()->is('settings')) Pengaturan Sistem
@@ -13,7 +13,7 @@
     </div>
 
     <div class="flex items-center gap-6">
-        @if(!request()->is('settings') && !request()->is('comparison'))
+        @if(!request()->is('/') && !request()->is('settings'))
         <div class="relative" id="branch-dropdown-container">
             <button
                 onclick="document.getElementById('branch-dropdown-menu').classList.toggle('hidden')"
