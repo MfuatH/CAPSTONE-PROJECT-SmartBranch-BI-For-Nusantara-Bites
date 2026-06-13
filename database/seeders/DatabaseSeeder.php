@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
         );
         $this->command->info('Akun Admin berhasil dibuat!');
 
-        $this->command->info('Memuat 15.000 data dari Excel...');
+        $this->command->info('Memuat 15.000 sampel data merata dari Excel (Systematic Sampling)...');
 
         $file = storage_path('app/private/Coffee_Shop_Sales_Nusantara_Clean.xlsx');
 
@@ -51,11 +51,18 @@ class DatabaseSeeder extends Seeder
             $storeCache = [];
             $productCache = [];
 
+            $rowIndex = 0;
+            $step = 10;
+
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             DB::beginTransaction();
 
             try {
                 foreach ($rows as $row) {
+                    $rowIndex++;
+                    
+                    if ($rowIndex % $step !== 0) continue; 
+
                     if ($count >= $limit) break; 
                     
                     if (empty(array_filter($row)) || count($header) !== count($row)) continue;
@@ -306,7 +313,7 @@ class DatabaseSeeder extends Seeder
                 }
             }
 
-            $this->command->info('Seeding berhasil! 15.000 data dan skenario peringatan stok telah dimuat.');
+            $this->command->info('Seeding berhasil! 15.000 sampel data merata dan skenario peringatan stok telah dimuat.');
 
         } else {
             $this->command->error(SimpleXLSX::parseError());
