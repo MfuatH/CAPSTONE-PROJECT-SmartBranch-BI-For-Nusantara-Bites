@@ -19,7 +19,7 @@
             </nav>
 
             <div class="pt-4 mt-6 border-t border-gray-100">
-                <form action="{{ route('logout') }}" method="POST" onsubmit="return confirm('Yakin mau keluar dari sistem, Bos?');">
+                <form action="{{ route('logout') }}" method="POST" onsubmit="return confirm('Konfirmasi keluar dari sistem?');">
                     @csrf
                     <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm text-red-600 hover:bg-red-50 transition-colors text-left">
                         <i data-lucide="log-out" class="w-4 h-4"></i> Keluar Aplikasi
