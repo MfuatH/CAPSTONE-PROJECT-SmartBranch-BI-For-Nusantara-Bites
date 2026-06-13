@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\BranchComparisonController;
 use App\Http\Controllers\ForecastController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TransactionController;
@@ -36,9 +37,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/stok-inventaris', [RawMaterialController::class, 'index'])->name('inventory.index');
 
-    Route::get('/comparison', function () {
-        return view('branch-comparison');
-    })->name('comparison.index');
+    Route::get('/comparison', [BranchComparisonController::class, 'index'])->name('comparison.index');
     
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 });
