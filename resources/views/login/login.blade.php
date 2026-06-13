@@ -12,10 +12,19 @@
         rel="stylesheet">
 
     <style>
+        :root{
+            --primary: #2563EB;
+            --accent:  #06B6D4;
+            --background-start: #F8FAFC;
+            --background-end: #ECFEFF;
+        }
         body {
             font-family: 'Nunito', sans-serif;
-            background: #F8F9FB;
+            background: linear-gradient(135deg,var(--background-start),var(--background-end));
+            color: #1E293B;
         }
+        .login-hero{ background: linear-gradient(135deg,var(--primary),var(--accent)); }
+        .glass-card { background: rgba(255,255,255,0.08); backdrop-filter: blur(6px); }
     </style>
 </head>
 
@@ -24,7 +33,7 @@
     <div class="min-h-screen grid lg:grid-cols-2">
 
         <!-- LEFT SIDE -->
-        <div class="hidden lg:flex bg-[#D9A168] relative overflow-hidden">
+        <div class="hidden lg:flex login-hero relative overflow-hidden">
 
             <div class="absolute inset-0 bg-black/10"></div>
 
@@ -55,9 +64,9 @@
 
                 <div class="grid grid-cols-2 gap-5">
 
-                    <div class="bg-white/15 backdrop-blur rounded-2xl p-5">
+                    <div class="bg-white/15 backdrop-blur rounded-2xl p-5 glass-card">
 
-                        <div class="text-3xl font-bold">
+                        <div class="text-3xl font-bold text-white">
                             5
                         </div>
 
@@ -67,7 +76,7 @@
 
                     </div>
 
-                    <div class="bg-white/15 backdrop-blur rounded-2xl p-5">
+                    <div class="bg-white/15 backdrop-blur rounded-2xl p-5 glass-card">
 
                         <div class="text-3xl font-bold">
                             AI
@@ -79,7 +88,7 @@
 
                     </div>
 
-                    <div class="bg-white/15 backdrop-blur rounded-2xl p-5">
+                    <div class="bg-white/15 backdrop-blur rounded-2xl p-5 glass-card">
 
                         <div class="text-3xl font-bold">
                             BI
@@ -91,7 +100,7 @@
 
                     </div>
 
-                    <div class="bg-white/15 backdrop-blur rounded-2xl p-5">
+                    <div class="bg-white/15 backdrop-blur rounded-2xl p-5 glass-card">
 
                         <div class="text-3xl font-bold">
                             Auto
@@ -154,7 +163,7 @@
                                 value="{{ old('email') }}"
                                 required
                                 placeholder="Masukkan email"
-                                class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D9A168]">
+                                class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2563EB]">
                         </div>
 
                         <div class="mb-4">
@@ -166,7 +175,7 @@
                                 name="password"
                                 required
                                 placeholder="Masukkan password"
-                                class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D9A168]">
+                                class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2563EB]">
                         </div>
 
                         <div class="flex justify-between items-center mb-6">
@@ -174,21 +183,21 @@
                                 <input 
                                     type="checkbox" 
                                     name="remember"
-                                    class="w-4 h-4 text-[#D9A168] border-gray-300 rounded focus:ring-[#D9A168]">
+                                    class="w-4 h-4 text-[#2563EB] border-gray-300 rounded focus:ring-[#2563EB]">
                                 Remember me
                             </label>
 
                             {{-- Link dimatikan pakai alert karena ini aplikasi internal 1 pintu --}}
                             <a href="#" 
                             onclick="alert('Sistem Terkunci: Silakan hubungi Admin IT Pusat untuk mereset kredensial Anda.'); return false;"
-                            class="text-[#D9A168] font-semibold text-sm hover:underline">
+                            class="text-[#2563EB] font-semibold text-sm hover:underline">
                                 Forgot Password?
                             </a>
                         </div>
 
                         <button
                             type="submit"
-                            class="w-full bg-[#D9A168] hover:bg-[#c99058] text-white py-3 rounded-xl font-bold transition shadow-sm">
+                            class="w-full bg-[#2563EB] hover:bg-[#1f4bd8] text-white py-3 rounded-xl font-bold transition shadow-sm">
                             Sign In
                         </button>
                     </form>

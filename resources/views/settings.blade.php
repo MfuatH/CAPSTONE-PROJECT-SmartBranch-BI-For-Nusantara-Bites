@@ -10,7 +10,7 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div class="p-4 col-span-1 h-fit bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
             <nav class="space-y-1">
-                <button onclick="switchTab('profil', this)" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors text-left bg-[#D9A168]/10 text-[#D9A168]">
+                <button onclick="switchTab('profil', this)" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors text-left bg-[#2563EB]/10 text-[#2563EB]">
                     <i data-lucide="user" class="w-4 h-4"></i> Profil Akun
                 </button>
                 <button onclick="switchTab('cabang', this)" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors text-left text-gray-500 hover:bg-gray-100">
@@ -58,7 +58,7 @@
                     @forelse($stores as $store)
                     <div class="flex justify-between items-center p-4 rounded-xl border border-gray-200 bg-gray-50">
                         <div class="flex items-center gap-4">
-                            <div class="p-3 rounded-xl bg-[#D9A168]/10 text-[#D9A168]"><i data-lucide="store" class="w-6 h-6"></i></div>
+                            <div class="p-3 rounded-xl bg-[#2563EB]/10 text-[#2563EB]"><i data-lucide="store" class="w-6 h-6"></i></div>
                             <div>
                                 <h3 class="font-bold text-gray-900">Cabang {{ $store->location }}</h3>
                                 <p class="text-sm text-gray-500"><i data-lucide="map-pin" class="w-3 h-3 inline"></i> ID Toko: #{{ $store->id }}</p>
@@ -91,25 +91,25 @@
         document.getElementById('tab-' + tabId).classList.add('block');
 
         document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('bg-[#D9A168]/10', 'text-[#D9A168]');
+            btn.classList.remove('bg-[#2563EB]/10', 'text-[#2563EB]');
             btn.classList.add('text-gray-500');
         });
 
         btnElement.classList.remove('text-gray-500');
-        btnElement.classList.add('bg-[#D9A168]/10', 'text-[#D9A168]');
+        btnElement.classList.add('bg-[#2563EB]/10', 'text-[#2563EB]');
     }
 
     function toggleSwitch(el, storeId) {
         const circle = el.querySelector('span');
-        if (el.classList.contains('bg-[#D9A168]')) {
-            el.classList.remove('bg-[#D9A168]');
+        if (el.classList.contains('bg-[#2563EB]')) {
+            el.classList.remove('bg-[#2563EB]');
             el.classList.add('bg-gray-300');
             circle.classList.remove('translate-x-6');
             circle.classList.add('translate-x-1');
             console.log('Matiin pemantauan toko ID:', storeId);
         } else {
             el.classList.remove('bg-gray-300');
-            el.classList.add('bg-[#D9A168]');
+            el.classList.add('bg-[#2563EB]');
             circle.classList.remove('translate-x-1');
             circle.classList.add('translate-x-6');
             console.log('Aktifkan pemantauan toko ID:', storeId);

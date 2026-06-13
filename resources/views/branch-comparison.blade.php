@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="space-y-6 pb-8">
+<div class="space-y-6 pb-8 bg-[#F8FAFC] min-h-screen text-[#1E293B]">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Analisis Performa Cabang</h1>
-            <p class="text-sm text-gray-500 mt-1">
+            <h1 class="text-2xl font-bold text-[#1E293B]">Analisis Performa Cabang</h1>
+            <p class="text-sm text-slate-500 mt-1">
                 @if ($branch)
                     Data penjualan dan prediksi AI untuk Cabang {{ $branch->location }}
                 @else
@@ -16,38 +16,38 @@
     </div>
 
     @if (! $branch)
-        <div class="rounded-2xl border border-yellow-200 bg-yellow-50 p-6 text-yellow-900 shadow-sm">
-            <h2 class="font-semibold text-lg">Cabang belum dipilih</h2>
-            <p class="text-sm text-yellow-800 mt-2">Silakan pilih salah satu cabang dari menu select pada navbar untuk melihat data khusus cabang dan forecast AI.</p>
+            <div class="rounded-2xl border border-[#FACC15] bg-[#FEF3C7] p-6 text-[#92400E] shadow-sm">
+            <h2 class="font-semibold text-lg text-[#1E293B]">Cabang belum dipilih</h2>
+            <p class="text-sm text-[#475569] mt-2">Silakan pilih salah satu cabang dari menu select pada navbar untuk melihat data khusus cabang dan forecast AI.</p>
         </div>
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-            <div class="p-5 bg-white rounded-xl shadow-sm border border-gray-100">
-                <p class="text-sm text-gray-500">Total Pendapatan Bulan Ini</p>
-                <p class="mt-2 text-xl font-semibold text-gray-900">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
+            <div class="p-5 bg-[#FFFFFF] rounded-xl shadow-sm border border-slate-200">
+                <p class="text-sm text-slate-500">Total Pendapatan Bulan Ini</p>
+                <p class="mt-2 text-xl font-semibold text-[#1E293B]">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
             </div>
-            <div class="p-5 bg-white rounded-xl shadow-sm border border-gray-100">
-                <p class="text-sm text-gray-500">Forecast AI Bulan Depan</p>
-                <p class="mt-2 text-xl font-semibold text-gray-900">Rp {{ number_format($forecastRevenue, 0, ',', '.') }}</p>
+            <div class="p-5 bg-[#FFFFFF] rounded-xl shadow-sm border border-slate-200">
+                <p class="text-sm text-slate-500">Forecast AI Bulan Depan</p>
+                <p class="mt-2 text-xl font-semibold text-[#1E293B]">Rp {{ number_format($forecastRevenue, 0, ',', '.') }}</p>
             </div>
-            <div class="p-5 bg-white rounded-xl shadow-sm border border-gray-100">
-                <p class="text-sm text-gray-500">Perubahan Forecast</p>
-                <p class="mt-2 text-xl font-semibold text-gray-900">{{ $forecastTrend > 0 ? '+' : '' }}{{ $forecastTrend }}%</p>
+            <div class="p-5 bg-[#FFFFFF] rounded-xl shadow-sm border border-slate-200">
+                <p class="text-sm text-slate-500">Perubahan Forecast</p>
+                <p class="mt-2 text-xl font-semibold text-[#2563EB]">{{ $forecastTrend > 0 ? '+' : '' }}{{ $forecastTrend }}%</p>
             </div>
-            <div class="p-5 bg-white rounded-xl shadow-sm border border-gray-100">
-                <p class="text-sm text-gray-500">Prediksi Menu Teratas</p>
-                <p class="mt-2 text-xl font-semibold text-gray-900">{{ $topProductPrediction }}</p>
+            <div class="p-5 bg-[#FFFFFF] rounded-xl shadow-sm border border-slate-200">
+                <p class="text-sm text-slate-500">Prediksi Menu Teratas</p>
+                <p class="mt-2 text-xl font-semibold text-[#1E293B]">{{ $topProductPrediction }}</p>
             </div>
         </div>
         <div class="w-full">
-            <div class="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-6 bg-[#FFFFFF] rounded-xl shadow-sm border border-[#E2E8F0]">
                 <div class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div>
-                        <h2 class="text-lg font-bold text-gray-900">Forecast Pendapatan Cabang</h2>
-                        <p class="text-sm text-gray-500 mt-1">Tren Data Aktual bulan ini vs Prediksi AI bulan depan.</p>
+                        <h2 class="text-lg font-bold text-[#1E293B]">Forecast Pendapatan Cabang</h2>
+                        <p class="text-sm text-slate-500 mt-1">Tren Data Aktual bulan ini vs Prediksi AI bulan depan.</p>
                     </div>
-                    <div class="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-700 border border-gray-200">
-                        Cabang terpilih: <span class="font-semibold">{{ $branch->location }}</span>
+                    <div class="rounded-xl bg-[#EFF6FF] px-4 py-3 text-sm text-[#1E293B] border border-[#BFDBFE]">
+                        Cabang terpilih: <span class="font-semibold text-[#2563EB]">{{ $branch->location }}</span>
                     </div>
                 </div>
                 <div id="total-sales-chart" class="w-full h-[420px]"></div>
@@ -55,40 +55,39 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="p-6 bg-[#FFFFFF] rounded-xl shadow-sm border border-slate-200">
                 <div class="mb-6">
-                    <h2 class="text-lg font-bold text-gray-900">Top Menu Performance</h2>
-                    <p class="text-xs text-gray-500 mt-1">5 item teratas dengan volume penjualan terbesar.</p>
+                    <h2 class="text-lg font-bold text-[#1E293B]">Top Menu Performance</h2>
+                    <p class="text-xs text-slate-500 mt-1">5 item teratas dengan volume penjualan terbesar.</p>
                 </div>
                 <div id="top-menu-chart" class="w-full h-[300px]"></div>
             </div>
 
-            <div class="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="p-6 bg-[#FFFFFF] rounded-xl shadow-sm border border-slate-200">
                 <div class="mb-6">
-                    <h2 class="text-lg font-bold text-gray-900">Bottom Menu Performance</h2>
-                    <p class="text-xs text-gray-500 mt-1">5 item dengan penjualan paling rendah.</p>
+                    <h2 class="text-lg font-bold text-[#1E293B]">Bottom Menu Performance</h2>
+                    <p class="text-xs text-slate-500 mt-1">5 item dengan penjualan paling rendah.</p>
                 </div>
                 <div id="bottom-menu-chart" class="w-full h-[300px]"></div>
             </div>
         </div>
 
         <div class="mt-8">
-            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <i data-lucide="trending-up" class="w-5 h-5 text-[#D9A168]"></i>
-                Prediksi Menu Unggulan (AI Forecast)
+                <h2 class="text-lg font-bold text-[#1E293B] mb-4 flex items-center gap-2">
+                    <i data-lucide="trending-up" class="w-5 h-5 text-[#2563EB]"></i>
             </h2>
 
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 @foreach($miniChartData as $index => $menuData)
-                    <div class="p-4 bg-white rounded-xl shadow-sm border border-gray-100 relative group hover:border-[#D9A168] transition-colors">
+                    <div class="p-4 bg-[#FFFFFF] rounded-xl shadow-sm border border-slate-200 relative group hover:border-[#2563EB] transition-colors">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-bold text-gray-900 truncate pr-6">{{ $menuData['name'] }}</h3>
-                            <button onclick="openChartModal('{{ $menuData['name'] }}')" class="absolute top-4 right-4 text-gray-400 hover:text-[#D9A168] transition-colors p-1 bg-gray-50 hover:bg-[#D9A168]/10 rounded-md" title="Lihat Full Screen">
+                            <h3 class="font-bold text-[#1E293B] truncate pr-6">{{ $menuData['name'] }}</h3>
+                            <button onclick="openChartModal('{{ $menuData['name'] }}')" class="absolute top-4 right-4 text-slate-400 hover:text-[#2563EB] transition-colors p-1 bg-slate-50 hover:bg-[#DBF4FF] rounded-md" title="Lihat Full Screen">
                                 <i data-lucide="maximize-2" class="w-4 h-4"></i>
                             </button>
                         </div>
                         <div id="mini-chart-{{ $index }}" class="w-full h-[80px]"></div>
-                        <div class="mt-3 text-xs text-gray-500">Prediksi Qty Bulan Depan: <span class="font-semibold text-gray-900">{{ $expandedMenuData[$menuData['name']]['predicted_qty'] ?? 0 }}</span></div>
+                            <div class="mt-3 text-xs text-[#475569]">Prediksi Qty Bulan Depan: <span class="font-semibold text-[#1E293B]">{{ $expandedMenuData[$menuData['name']]['predicted_qty'] ?? 0 }}</span></div>
                     </div>
                 @endforeach
 
@@ -140,6 +139,16 @@
     const expandedMenuData = @json($expandedMenuData ?? []);
 
     document.addEventListener("DOMContentLoaded", function() {
+        const __css = getComputedStyle(document.documentElement);
+        const PALETTE = {
+            primary: (__css.getPropertyValue('--primary') || '#2563EB').trim(),
+            accent:  (__css.getPropertyValue('--accent') || '#06B6D4').trim(),
+            success: (__css.getPropertyValue('--success') || '#22C55E').trim(),
+            warning: (__css.getPropertyValue('--warning') || '#FACC15').trim(),
+            danger:  (__css.getPropertyValue('--danger') || '#EF4444').trim(),
+            text:    (__css.getPropertyValue('--text') || '#1E293B').trim(),
+        };
+
         if (!branchDataAvailable) {
             return;
         }
@@ -162,7 +171,7 @@
                     toolbar: { show: false },
                     fontFamily: 'inherit'
                 },
-                colors: ['#0B0F14', '#D9A168'],
+                colors: [PALETTE.primary, PALETTE.accent],
                 stroke: {
                     width: [3, 3],
                     curve: 'smooth',
@@ -187,26 +196,30 @@
         if (document.querySelector("#top-menu-chart")) {
             new ApexCharts(document.querySelector("#top-menu-chart"), {
                 chart: { type: 'bar', height: 300, toolbar: { show: false }, fontFamily: 'inherit' },
-                series: [{ name: 'Terjual', data: topMenuValues }],
-                colors: ['#D9A168'],
-                plotOptions: { bar: { borderRadius: 6, dataLabels: { position: 'top' } } },
-                dataLabels: { enabled: true, offsetY: -16, style: { colors: ['#374151'] } },
-                xaxis: { categories: topMenuCategories, labels: { rotate: -45 } },
-                yaxis: { labels: { show: false } },
-                grid: { strokeDashArray: 4 }
+                series: [{ name: 'Total Terjual', data: topMenuValues }],
+                colors: [PALETTE.primary],
+                plotOptions: { bar: { borderRadius: 4, horizontal: true } },
+                dataLabels: { enabled: false },
+                xaxis: {
+                    categories: topMenuCategories,
+                    labels: { style: { colors: '#64748b' } }
+                },
+                yaxis: { labels: { style: { colors: '#475569' } } }
             }).render();
         }
 
         if (document.querySelector("#bottom-menu-chart")) {
             new ApexCharts(document.querySelector("#bottom-menu-chart"), {
                 chart: { type: 'bar', height: 300, toolbar: { show: false }, fontFamily: 'inherit' },
-                series: [{ name: 'Terjual', data: bottomMenuValues }],
-                colors: ['#94A3B8'],
-                plotOptions: { bar: { borderRadius: 6, dataLabels: { position: 'top' } } },
-                dataLabels: { enabled: true, offsetY: -16, style: { colors: ['#475569'] } },
-                xaxis: { categories: bottomMenuCategories, labels: { rotate: -45 } },
-                yaxis: { labels: { show: false } },
-                grid: { strokeDashArray: 4 }
+                series: [{ name: 'Total Terjual', data: bottomMenuValues }],
+                colors: [PALETTE.accent],
+                plotOptions: { bar: { borderRadius: 4, horizontal: true } },
+                dataLabels: { enabled: false },
+                xaxis: {
+                    categories: bottomMenuCategories,
+                    labels: { style: { colors: '#64748b' } }
+                },
+                yaxis: { labels: { style: { colors: '#475569' } } }
             }).render();
         }
 
@@ -216,7 +229,7 @@
                 series: [{ name: menuData.name, data: miniSeries }],
                 chart: { type: 'line', height: 80, sparkline: { enabled: true }, fontFamily: 'inherit' },
                 stroke: { curve: 'smooth', width: 2 },
-                colors: ['#D9A168'],
+                colors: [PALETTE.primary],
                 tooltip: { fixed: { enabled: false }, x: { show: false }, marker: { show: false } }
             }).render();
         });
@@ -243,7 +256,7 @@
             chart: { type: 'line', height: '100%', width: '100%', toolbar: { show: true }, fontFamily: 'inherit' },
             stroke: { curve: 'smooth', width: 4, dashArray: [0, 8] },
             markers: { size: 6, hover: { size: 8 } },
-            colors: ['#0B0F14', '#D9A168'],
+            colors: [PALETTE.primary, PALETTE.accent],
             xaxis: { categories: categories },
             yaxis: { labels: { formatter: function(value) { return value.toLocaleString('id-ID'); } } },
             legend: { position: 'top', horizontalAlign: 'right' }
