@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        DB::disableQueryLog();
+
         $this->command->info('Membuat akun Super Admin...');
         
         User::updateOrCreate(
@@ -26,14 +28,14 @@ class DatabaseSeeder extends Seeder
                 'is_active' => true,
             ]
         );
-        $this->command->info('Akun Admin berhasil dibuat! (admin@nusantara.com / password123)');
+        $this->command->info('Akun Admin berhasil dibuat!');
 
-        $this->command->info('Memuat 5.000 data dari Excel...');
+        $this->command->info('Memuat SELURUH data dari Excel (Bulk Insert Mode)...');
 
         $file = storage_path('app/private/Coffee_Shop_Sales_Nusantara_Clean.xlsx');
 
         if (!file_exists($file)) {
-            $this->command->error("File Excel tidak ditemukan di: $file. Pastikan file sudah ada dan coba lagi.");
+            $this->command->error("File Excel tidak ditemukan di: $file.");
             return;
         }
 
@@ -41,46 +43,77 @@ class DatabaseSeeder extends Seeder
             $rows = $xlsx->rows();
             $header = array_shift($rows);
             
-            $limit = 5000;
             $count = 0;
+            $chunkSize = 2500;
+            $transactionsChunk = [];
+            
+            $storeCache = [];
+            $productCache = [];
 
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            DB::beginTransaction();
 
-            foreach ($rows as $row) {
-                if ($count >= $limit) break;
-                if (empty(array_filter($row)) || count($header) !== count($row)) continue;
+            try {
+                foreach ($rows as $row) {
+                    if (empty(array_filter($row)) || count($header) !== count($row)) continue;
 
-                $data = array_combine($header, $row);
+                    $data = array_combine($header, $row);
 
-                $store = Store::firstOrCreate(
-                    ['id' => $data['store_id']],
-                    ['location' => $data['store_location'], 'status' => 'Aktif']
-                );
+                    if (!isset($storeCache[$data['store_id']])) {
+                        Store::firstOrCreate(
+                            ['id' => $data['store_id']],
+                            ['location' => $data['store_location'], 'status' => 'Aktif']
+                        );
+                        $storeCache[$data['store_id']] = true; 
+                    }
 
-                Product::firstOrCreate(
-                    ['id' => $data['product_id']],
-                    [
-                        'category'   => $data['product_category'],
-                        'type'       => $data['product_type'],
-                        'detail'     => $data['product_detail'],
-                        'unit_price' => $data['unit_price'],
-                    ]
-                );
+                    if (!isset($productCache[$data['product_id']])) {
+                        Product::firstOrCreate(
+                            ['id' => $data['product_id']],
+                            [
+                                'category'   => $data['product_category'],
+                                'type'       => $data['product_type'],
+                                'detail'     => $data['product_detail'],
+                                'unit_price' => $data['unit_price'],
+                            ]
+                        );
+                        $productCache[$data['product_id']] = true;
+                    }
 
-                Transaction::create([
-                    'id'               => $data['transaction_id'],
-                    'store_id'         => $data['store_id'],
-                    'product_id'       => $data['product_id'],
-                    'transaction_date' => $data['transaction_date'],
-                    'transaction_time' => $data['transaction_time'],
-                    'qty'              => $data['transaction_qty'],
-                ]);
+                    $transactionsChunk[] = [
+                        'id'               => $data['transaction_id'],
+                        'store_id'         => $data['store_id'],
+                        'product_id'       => $data['product_id'],
+                        'transaction_date' => $data['transaction_date'],
+                        'transaction_time' => $data['transaction_time'],
+                        'qty'              => $data['transaction_qty'],
+                        'created_at'       => now(), 
+                        'updated_at'       => now(),
+                    ];
 
-                $count++;
+                    $count++;
+
+                    if (count($transactionsChunk) >= $chunkSize) {
+                        Transaction::insert($transactionsChunk);
+                        $transactionsChunk = [];
+                        $this->command->info("Mengeksekusi... $count baris diproses.");
+                    }
+                }
+
+                if (!empty($transactionsChunk)) {
+                    Transaction::insert($transactionsChunk);
+                }
+
+                DB::commit();
+                $this->command->info("Selesai memuat total $count data transaksi!");
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                $this->command->error("Terjadi kesalahan: " . $e->getMessage());
+                return;
+            } finally {
+                DB::statement('SET FOREIGN_KEY_CHECKS=1;');
             }
-
-            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-            $this->command->info("Selesai memuat $count data transaksi dari Excel!");
 
             $this->command->info('Menyiapkan data bahan baku untuk setiap kategori produk...');
 
@@ -141,7 +174,7 @@ class DatabaseSeeder extends Seeder
             
             foreach ($products as $product) {
                 $attachData = [];
-                $namaMenu = strtolower($product->name);
+                $namaMenu = strtolower($product->name ?? $product->detail ?? '');
 
                 switch ($product->type) {
                     case 'Barista Espresso':
@@ -262,7 +295,7 @@ class DatabaseSeeder extends Seeder
                 }
             }
 
-            $this->command->info('Seed data berhasil dimuat dan logika bahan baku & resep menu selesai dijalankan!');
+            $this->command->info('Seeding berhasil total! Semua 150K data dan logika bahan baku telah dimuat.');
 
         } else {
             $this->command->error(SimpleXLSX::parseError());

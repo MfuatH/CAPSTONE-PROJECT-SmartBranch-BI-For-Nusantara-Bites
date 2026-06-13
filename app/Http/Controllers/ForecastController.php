@@ -29,6 +29,8 @@ class ForecastController extends Controller
         $berhasil = 0;
         $gagal = 0;
 
+        DB::table('raw_material_store')->update(['forecast_qty' => 0]);
+
         foreach ($stores as $store) {
             foreach ($products as $product) {
                 
@@ -78,14 +80,32 @@ class ForecastController extends Controller
                         $hasilAI = $response->json();
                         
                         if ($hasilAI['status'] == 'success') {
+                            $predictedQty = $hasilAI['prediction'];
+
                             ForecastResult::create([
                                 'store_id'      => $store->id,
                                 'product_id'    => $product->id,
                                 'target_month'  => $targetBulan,
                                 'target_year'   => $targetTahun,
-                                'predicted_qty' => $hasilAI['prediction']
+                                'predicted_qty' => $predictedQty
                             ]);
                             $berhasil++;
+
+                            if ($predictedQty > 0) {
+                                $resep = DB::table('product_raw_material')
+                                    ->where('product_id', $product->id)
+                                    ->get();
+
+                                foreach ($resep as $bahan) {
+                                    $totalKebutuhanBahan = $predictedQty * $bahan->qty_needed;
+
+                                    DB::table('raw_material_store')
+                                        ->where('store_id', $store->id)
+                                        ->where('raw_material_id', $bahan->raw_material_id)
+                                        ->increment('forecast_qty', $totalKebutuhanBahan);
+                                }
+                            }
+
                         } else {
                             $gagal++;
                         }
@@ -98,6 +118,6 @@ class ForecastController extends Controller
             }
         }
 
-        return back()->with('success', "Proses Prediksi AI Selesai! $berhasil menu berhasil dihitung, $gagal gagal.");
+        return back()->with('success', "Proses Prediksi AI Selesai! $berhasil menu berhasil dihitung dan bahan baku telah dikalkulasi. $gagal proses gagal.");
     }
 }

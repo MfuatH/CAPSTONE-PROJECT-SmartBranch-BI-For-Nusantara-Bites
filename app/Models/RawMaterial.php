@@ -19,7 +19,7 @@ class RawMaterial extends Model
     public function stores()
     {
         return $this->belongsToMany(Store::class, 'raw_material_store')
-                    ->withPivot('current_stock', 'minimum_stock')
+                    ->withPivot('current_stock', 'minimum_stock', 'forecast_qty')
                     ->withTimestamps();
     }
 

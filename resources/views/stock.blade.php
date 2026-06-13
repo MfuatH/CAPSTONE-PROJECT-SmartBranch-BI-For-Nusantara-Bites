@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="space-y-6 pb-8">
+    {{-- ALERT STOK MENIPIS --}}
     @if($stokMenipis > 0)
     <div class="bg-red-50 border border-red-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div class="flex items-center gap-3">
@@ -19,6 +20,7 @@
     </div>
     @endif
 
+    {{-- HEADER HEADER --}}
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Rekomendasi Stok</h1>
@@ -26,6 +28,7 @@
         </div>
     </div>
 
+    {{-- TABEL DATA --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative">
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">
@@ -44,17 +47,27 @@
                             @php
                                 $currentStock = $store->pivot->current_stock;
                                 $minStock = $store->pivot->minimum_stock;
+                                $unit = $item->unit ?? 'Unit'; 
+                                $forecastQty = $store->pivot->forecast_qty ?? 0;
+                                $recomQty = $forecastQty > 0 ? $forecastQty : max(0, $minStock - $currentStock + 15);
                             @endphp
                             <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                                 <td class="py-4 px-6 font-semibold text-gray-900">{{ $item->name }}</td>
                                 <td class="py-4 px-6 text-gray-500">{{ $store->location }}</td>
                                 <td class="py-4 px-6 font-medium text-gray-900">
-                                    {{ number_format($currentStock, 0, ',', '.') }} {{ $item->unit }}
+                                    {{ number_format($currentStock, 0, ',', '.') }} {{ $unit }}
                                 </td>
-                                <td class="py-4 px-6 text-gray-400 italic">Menunggu AI...</td>
+                                <td class="py-4 px-6">
+                                    <div class="flex flex-col">
+                                        <span class="font-medium text-gray-900">
+                                            {{ number_format($forecastQty, 0, ',', '.') }} {{ $unit }}
+                                        </span>
+                                        <span class="text-[10px] text-gray-400 uppercase tracking-wider">Perkiraan Kebutuhan</span>
+                                    </div>
+                                </td>
                                 <td class="py-4 px-6 text-center">
                                     @if($currentStock <= $minStock)
-                                        <button onclick="openStockModal('{{ $item->name }}', '{{ $store->location }}')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-100 text-red-600 hover:bg-red-200">
+                                        <button onclick="openStockModal('{{ addslashes($item->name) }}', '{{ addslashes($store->location) }}', '{{ $recomQty }}', '{{ $unit }}')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-100 text-red-600 hover:bg-red-200 transition-colors">
                                             <i data-lucide="alert-circle" class="w-3 h-3"></i> KRITIS
                                         </button>
                                     @elseif($currentStock <= $minStock * 1.5)
@@ -80,15 +93,17 @@
             </table>
         </div>
 
-        @if($rawMaterials->hasPages())
+        {{-- PAGINATION --}}
+        @if(isset($rawMaterials) && method_exists($rawMaterials, 'hasPages') && $rawMaterials->hasPages())
         <div class="p-4 border-t border-gray-200">
             {{ $rawMaterials->links('vendor.pagination.tailwind') }}
         </div>
         @endif
     </div>
 
-    <div id="stock-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+    {{-- MODAL REKOMENDASI AI --}}
+    <div id="stock-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm transition-opacity">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-gray-200 overflow-hidden transform transition-all">
             <div class="p-6">
                 <div class="flex items-start gap-4">
                     <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 bg-[#D9A168]/10 text-[#D9A168]">
@@ -100,19 +115,20 @@
                     </div>
                 </div>
                 <div class="mt-6 p-4 rounded-xl border bg-[#D9A168]/5 border-[#D9A168]/20 text-sm font-medium text-gray-900 leading-relaxed">
-                    Sistem mendeteksi surplus di cabang terdekat. Pindahkan 20 Unit Bahan ke cabang yang kritis.
+                    Sistem mendeteksi surplus di gudang pusat. AI menyarankan untuk memindahkan <span id="modal-qty-recom" class="font-bold text-[#D9A168] text-base"></span> ke cabang yang kritis.
                 </div>
             </div>
             <div class="p-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
-                <button onclick="document.getElementById('stock-modal').classList.add('hidden')" class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">Tutup</button>
+                <button onclick="document.getElementById('stock-modal').classList.add('hidden')" class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors text-gray-700">Tutup</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    function openStockModal(itemName, location) {
+    function openStockModal(itemName, location, qty, unit) {
         document.getElementById('modal-item-name').innerText = itemName + ' (' + location + ')';
+        document.getElementById('modal-qty-recom').innerText = qty + ' ' + unit;
         document.getElementById('stock-modal').classList.remove('hidden');
     }
 </script>

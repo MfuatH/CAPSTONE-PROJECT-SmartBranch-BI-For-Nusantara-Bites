@@ -13,6 +13,8 @@ class RawMaterialController extends Controller
         $branchId = $request->input('branch_id') ?? session('branch_id');
 
         $query = RawMaterial::with(['stores' => function($q) use ($branchId) {
+            $q->withPivot('current_stock', 'minimum_stock', 'forecast_qty');
+            
             if ($branchId) {
                 $q->where('stores.id', $branchId);
             }
