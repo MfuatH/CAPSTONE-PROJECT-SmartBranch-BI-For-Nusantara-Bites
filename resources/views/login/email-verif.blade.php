@@ -31,7 +31,7 @@
                 <div class="text-center">
 
                     <div
-                        class="w-24 h-24 bg-[#D9A168]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        class="w-24 h-24 bg-[#2563EB]/10 rounded-full flex items-center justify-center mx-auto mb-6">
 
                         ✉️
 
@@ -51,14 +51,14 @@
                     </p>
 
                     <button
-                        class="w-full bg-[#D9A168] hover:bg-[#c99058] text-white py-3 rounded-xl font-bold transition mb-4">
+                        class="w-full bg-[#2563EB] hover:bg-[#1f4bd8] text-white py-3 rounded-xl font-bold transition mb-4">
 
                         Resend Verification Email
 
                     </button>
 
                     <a href="login.html"
-                        class="text-[#D9A168] font-semibold">
+                        class="text-[#2563EB] font-semibold">
 
                         Back to Login
 

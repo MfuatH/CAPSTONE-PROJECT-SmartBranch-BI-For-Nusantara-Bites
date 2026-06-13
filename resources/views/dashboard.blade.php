@@ -14,7 +14,7 @@
             @csrf
             <button type="submit" 
                 onclick="this.innerHTML='🤖 AI berpikir...'; this.classList.add('opacity-75');" 
-                class="bg-[#D9A168] hover:bg-[#c28e5a] text-white font-semibold py-1.5 px-4 rounded-lg shadow-sm transition flex items-center gap-1.5 text-sm">
+            class="btn-primary text-white font-semibold py-1.5 px-4 rounded-lg shadow-sm transition flex items-center gap-1.5 text-sm">
                 
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
@@ -233,6 +233,13 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    const __css = getComputedStyle(document.documentElement);
+    const PALETTE = {
+        primary: (__css.getPropertyValue('--primary') || '#2563EB').trim(),
+        accent:  (__css.getPropertyValue('--accent') || '#06B6D4').trim(),
+        warning: (__css.getPropertyValue('--warning') || '#FACC15').trim(),
+        text:    (__css.getPropertyValue('--text') || '#1E293B').trim(),
+    };
     const forecastCategories = @json($chartCategories);
     const historySeries = @json($historySeries);
     const forecastSeries = @json($forecastSeries);
@@ -266,11 +273,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 curve: 'smooth',
                 dashArray: [0, 6]
             },
-            colors: ['#374151', '#D9A168'],
+            colors: [PALETTE.text, PALETTE.warning],
             markers: {
                 size: [4, 6],
                 colors: ['#fff'],
-                strokeColors: ['#374151', '#D9A168'],
+                strokeColors: [PALETTE.text, PALETTE.warning],
                 strokeWidth: 2
             },
             xaxis: {
@@ -295,7 +302,7 @@ document.addEventListener("DOMContentLoaded", function () {
         new ApexCharts(document.querySelector("#top-menu-chart"), {
             chart: { type: 'bar', height: 300, toolbar: { show: false }, fontFamily: 'inherit' },
             series: [{ name: 'Total Terjual', data: topMenuValues }],
-            colors: ['#D9A168'],
+            colors: [PALETTE.primary],
             plotOptions: { bar: { borderRadius: 4, horizontal: true } },
             dataLabels: { enabled: false },
             xaxis: { categories: topMenuCategories }
@@ -306,7 +313,7 @@ document.addEventListener("DOMContentLoaded", function () {
         new ApexCharts(document.querySelector("#bottom-menu-chart"), {
             chart: { type: 'bar', height: 300, toolbar: { show: false }, fontFamily: 'inherit' },
             series: [{ name: 'Total Terjual', data: bottomMenuValues }],
-            colors: ['#9CA3AF'],
+            colors: [PALETTE.accent],
             plotOptions: { bar: { borderRadius: 4, horizontal: true } },
             dataLabels: { enabled: false },
             xaxis: { categories: bottomMenuCategories }

@@ -29,10 +29,10 @@
             <div class="text-center mb-8">
 
                 <div
-                    class="w-20 h-20 bg-[#D9A168]/10 rounded-full flex items-center justify-center mx-auto mb-5">
+                    class="w-20 h-20 bg-[#2563EB]/10 rounded-full flex items-center justify-center mx-auto mb-5">
 
                     <svg xmlns="http://www.w3.org/2000/svg"
-                        class="w-10 h-10 text-[#D9A168]"
+                        class="w-10 h-10 text-[#2563EB]"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -74,13 +74,13 @@
                         <input
                             type="email"
                             placeholder="contoh@email.com"
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D9A168]">
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2563EB]">
 
                     </div>
 
                     <button
                         type="submit"
-                        class="w-full bg-[#D9A168] hover:bg-[#c99058] text-white py-3 rounded-xl font-bold transition">
+                        class="w-full bg-[#2563EB] hover:bg-[#1f4bd8] text-white py-3 rounded-xl font-bold transition">
 
                         Send Reset Link
 
@@ -93,7 +93,7 @@
             <div class="text-center mt-6">
 
                 <a href="login.html"
-                    class="font-semibold text-[#D9A168]">
+                    class="font-semibold text-[#2563EB]">
 
                     ← Back to Login
 

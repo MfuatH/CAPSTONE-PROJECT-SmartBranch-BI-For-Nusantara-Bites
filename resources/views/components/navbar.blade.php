@@ -17,7 +17,7 @@
         <div class="relative" id="branch-dropdown-container">
             <button
                 onclick="document.getElementById('branch-dropdown-menu').classList.toggle('hidden')"
-                class="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2.5 rounded-lg shadow-sm cursor-pointer hover:border-[#D9A168]/50 transition-colors">
+                class="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2.5 rounded-lg shadow-sm cursor-pointer hover:border-[#2563EB]/50 transition-colors">
                 <span class="text-sm font-medium text-gray-700" id="selected-branch-text">
                     {{ $selectedBranchName }}
                 </span>
@@ -26,13 +26,13 @@
 
             <div id="branch-dropdown-menu" class="hidden absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg py-1.5 z-50">
                 <a href="{{ route('set.branch') }}"
-                    class="block px-3 py-2 text-sm font-medium {{ !session('branch_id') ? 'text-[#D9A168] bg-[#D9A168]/10' : 'text-gray-700 hover:bg-gray-50' }} transition-colors">
+                    class="block px-3 py-2 text-sm font-medium {{ !session('branch_id') ? 'text-[#2563EB] bg-[#2563EB]/10' : 'text-gray-700 hover:bg-gray-50' }} transition-colors">
                     Semua Cabang
                 </a>
 
                 @foreach($branches as $branch)
                     <a href="{{ route('set.branch', $branch->id) }}"
-                        class="block px-3 py-2 text-sm font-medium {{ session('branch_id') == $branch->id ? 'text-[#D9A168] bg-[#D9A168]/10' : 'text-gray-700 hover:bg-gray-50' }} transition-colors">
+                        class="block px-3 py-2 text-sm font-medium {{ session('branch_id') == $branch->id ? 'text-[#2563EB] bg-[#2563EB]/10' : 'text-gray-700 hover:bg-gray-50' }} transition-colors">
                         Cabang {{ $branch->location }}
                     </a>
                 @endforeach
