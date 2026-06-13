@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
         );
         $this->command->info('Akun Admin berhasil dibuat!');
 
-        $this->command->info('Memuat SELURUH data dari Excel (Bulk Insert Mode)...');
+        $this->command->info('Memuat 15.000 data dari Excel...');
 
         $file = storage_path('app/private/Coffee_Shop_Sales_Nusantara_Clean.xlsx');
 
@@ -44,6 +44,7 @@ class DatabaseSeeder extends Seeder
             $header = array_shift($rows);
             
             $count = 0;
+            $limit = 15000;
             $chunkSize = 2500;
             $transactionsChunk = [];
             
@@ -55,6 +56,8 @@ class DatabaseSeeder extends Seeder
 
             try {
                 foreach ($rows as $row) {
+                    if ($count >= $limit) break; 
+                    
                     if (empty(array_filter($row)) || count($header) !== count($row)) continue;
 
                     $data = array_combine($header, $row);
@@ -157,11 +160,19 @@ class DatabaseSeeder extends Seeder
             $stores = Store::all();
             foreach ($stores as $store) {
                 foreach ($materialMap as $name => $mId) {
+                    
+                    $currentStock = str_contains($name, 'Cup') ? rand(5000, 10000) : rand(2000, 8000);
+                    $minStock = str_contains($name, 'Cup') ? 1000 : 500;
+
+                    if (in_array($name, ['Susu Fresh Milk (UHT)', 'Gula Aren Cair'])) {
+                        $currentStock = rand(50, 300);
+                    }
+
                     DB::table('raw_material_store')->updateOrInsert(
                         ['store_id' => $store->id, 'raw_material_id' => $mId],
                         [
-                            'current_stock'   => str_contains($name, 'Cup') ? rand(5000, 10000) : rand(2000, 8000),
-                            'minimum_stock'   => str_contains($name, 'Cup') ? 1000 : 500,
+                            'current_stock'   => $currentStock,
+                            'minimum_stock'   => $minStock,
                             'created_at'      => now(),
                             'updated_at'      => now(),
                         ]
@@ -295,7 +306,7 @@ class DatabaseSeeder extends Seeder
                 }
             }
 
-            $this->command->info('Seeding berhasil total! Semua 150K data dan logika bahan baku telah dimuat.');
+            $this->command->info('Seeding berhasil! 15.000 data dan skenario peringatan stok telah dimuat.');
 
         } else {
             $this->command->error(SimpleXLSX::parseError());

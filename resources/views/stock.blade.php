@@ -14,9 +14,15 @@
                 <p class="text-sm text-red-600/80 font-medium">Terdapat <b>{{ $stokMenipis }}</b> catatan bahan baku berstatus KRITIS yang perlu segera ditangani.</p>
             </div>
         </div>
-        <button class="whitespace-nowrap bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors shadow-sm">
-            Tinjau Item Mendesak
-        </button>
+        @if(request()->has('kritis'))
+            <a href="{{ request()->fullUrlWithoutQuery('kritis') }}" class="whitespace-nowrap bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-700 transition-colors shadow-sm">
+                Lihat Semua Stok
+            </a>
+        @else
+            <a href="{{ request()->fullUrlWithQuery(['kritis' => 1]) }}" class="whitespace-nowrap bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors shadow-sm">
+                Tinjau Item Mendesak
+            </a>
+        @endif
     </div>
     @endif
 

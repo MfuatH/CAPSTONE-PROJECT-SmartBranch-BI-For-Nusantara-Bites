@@ -11,22 +11,29 @@ class RawMaterialController extends Controller
     public function index(Request $request)
     {
         $branchId = $request->input('branch_id') ?? session('branch_id');
+        
+        $filterKritis = $request->has('kritis'); 
 
-        $query = RawMaterial::with(['stores' => function($q) use ($branchId) {
+        $query = RawMaterial::with(['stores' => function($q) use ($branchId, $filterKritis) {
             $q->withPivot('current_stock', 'minimum_stock', 'forecast_qty');
             
             if ($branchId) {
                 $q->where('stores.id', $branchId);
             }
+
+            if ($filterKritis) {
+                $q->whereColumn('raw_material_store.current_stock', '<=', 'raw_material_store.minimum_stock');
+            }
         }]);
 
-        if ($branchId) {
-            $query->whereHas('stores', function($q) use ($branchId) {
+        $query->whereHas('stores', function($q) use ($branchId, $filterKritis) {
+            if ($branchId) {
                 $q->where('stores.id', $branchId);
-            });
-        } else {
-            $query->has('stores');
-        }
+            }
+            if ($filterKritis) {
+                $q->whereColumn('raw_material_store.current_stock', '<=', 'raw_material_store.minimum_stock');
+            }
+        });
 
         $rawMaterials = $query->orderBy('name', 'asc')->paginate(10)->appends($request->all());
 

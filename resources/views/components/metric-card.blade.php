@@ -3,9 +3,11 @@
         <div class="w-10 h-10 rounded-lg bg-[#D9A168]/10 flex items-center justify-center text-[#D9A168]">
             <i data-lucide="{{ $icon }}" class="w-5 h-5"></i>
         </div>
-        <div class="flex items-center gap-1 text-emerald-500 text-sm font-semibold bg-emerald-50 px-2 py-1 rounded-md">
-            @if(!isset($trendIsValue) || !$trendIsValue)
-            <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+        <div class="flex items-center gap-1 text-sm font-semibold px-2 py-1 rounded-md {{ $trend === 'Urgent' ? 'text-red-600 bg-red-100' : 'text-emerald-500 bg-emerald-50' }}">
+            @if($trend === 'Urgent')
+                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+            @elseif(!isset($trendIsValue) || !$trendIsValue)
+                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
             @endif
             <span>{{ $trend }}</span>
         </div>
