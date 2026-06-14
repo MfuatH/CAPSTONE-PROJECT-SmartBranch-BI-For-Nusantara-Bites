@@ -131,24 +131,24 @@
     const forecastCategories = @json($chartCategories ?? []);
     const historySeries = @json($historySeries ?? []);
     const forecastSeries = @json($forecastSeries ?? []);
-    const topMenuCategories = @json($topMenu->pluck('name'));
-    const topMenuValues = @json($topMenu->pluck('total_sold'));
-    const bottomMenuCategories = @json($bottomMenu->pluck('name'));
-    const bottomMenuValues = @json($bottomMenu->pluck('total_sold'));
+    const topMenuCategories = @json($topMenu->pluck('name') ?? []);
+    const topMenuValues = @json($topMenu->pluck('total_sold') ?? []);
+    const bottomMenuCategories = @json($bottomMenu->pluck('name') ?? []);
+    const bottomMenuValues = @json($bottomMenu->pluck('total_sold') ?? []);
     const miniChartData = @json($miniChartData ?? []);
     const expandedMenuData = @json($expandedMenuData ?? []);
 
-    document.addEventListener("DOMContentLoaded", function() {
-        const __css = getComputedStyle(document.documentElement);
-        const PALETTE = {
-            primary: (__css.getPropertyValue('--primary') || '#2563EB').trim(),
-            accent:  (__css.getPropertyValue('--accent') || '#06B6D4').trim(),
-            success: (__css.getPropertyValue('--success') || '#22C55E').trim(),
-            warning: (__css.getPropertyValue('--warning') || '#FACC15').trim(),
-            danger:  (__css.getPropertyValue('--danger') || '#EF4444').trim(),
-            text:    (__css.getPropertyValue('--text') || '#1E293B').trim(),
-        };
+    const __css = getComputedStyle(document.documentElement);
+    const PALETTE = {
+        primary: (__css.getPropertyValue('--primary') || '#2563EB').trim(),
+        accent:  (__css.getPropertyValue('--accent') || '#D9A168').trim(), 
+        success: (__css.getPropertyValue('--success') || '#22C55E').trim(),
+        warning: (__css.getPropertyValue('--warning') || '#FACC15').trim(),
+        danger:  (__css.getPropertyValue('--danger') || '#EF4444').trim(),
+        text:    (__css.getPropertyValue('--text') || '#1E293B').trim(),
+    };
 
+    document.addEventListener("DOMContentLoaded", function() {
         if (!branchDataAvailable) {
             return;
         }
@@ -156,39 +156,19 @@
         if (document.querySelector("#total-sales-chart")) {
             new ApexCharts(document.querySelector("#total-sales-chart"), {
                 series: [
-                    {
-                        name: 'Data Aktual',
-                        data: historySeries
-                    },
-                    {
-                        name: 'Prediksi AI',
-                        data: forecastSeries
-                    }
+                    { name: 'Data Aktual', data: historySeries },
+                    { name: 'Prediksi AI', data: forecastSeries }
                 ],
-                chart: {
-                    type: 'area',
-                    height: 420,
-                    toolbar: { show: false },
-                    fontFamily: 'inherit'
-                },
+                chart: { type: 'area', height: 420, toolbar: { show: false }, fontFamily: 'inherit' },
                 colors: [PALETTE.primary, PALETTE.accent],
-                stroke: {
-                    width: [3, 3],
-                    curve: 'smooth',
-                    dashArray: [0, 6]
-                },
+                stroke: { width: [3, 3], curve: 'smooth', dashArray: [0, 6] },
                 fill: {
                     type: ['solid', 'gradient'],
                     opacity: [0.25, 0.35],
                     gradient: { shadeIntensity: 1, opacityFrom: 0.35, opacityTo: 0.05, stops: [0, 100] }
                 },
-                xaxis: {
-                    categories: forecastCategories,
-                    labels: { style: { colors: '#64748b' } }
-                },
-                yaxis: {
-                    labels: { formatter: function(value) { return 'Rp ' + value.toLocaleString('id-ID'); } }
-                },
+                xaxis: { categories: forecastCategories, labels: { style: { colors: '#64748b' } } },
+                yaxis: { labels: { formatter: function(value) { return 'Rp ' + value.toLocaleString('id-ID'); } } },
                 legend: { position: 'top', horizontalAlign: 'right' }
             }).render();
         }
@@ -200,10 +180,7 @@
                 colors: [PALETTE.primary],
                 plotOptions: { bar: { borderRadius: 4, horizontal: true } },
                 dataLabels: { enabled: false },
-                xaxis: {
-                    categories: topMenuCategories,
-                    labels: { style: { colors: '#64748b' } }
-                },
+                xaxis: { categories: topMenuCategories, labels: { style: { colors: '#64748b' } } },
                 yaxis: { labels: { style: { colors: '#475569' } } }
             }).render();
         }
@@ -215,10 +192,7 @@
                 colors: [PALETTE.accent],
                 plotOptions: { bar: { borderRadius: 4, horizontal: true } },
                 dataLabels: { enabled: false },
-                xaxis: {
-                    categories: bottomMenuCategories,
-                    labels: { style: { colors: '#64748b' } }
-                },
+                xaxis: { categories: bottomMenuCategories, labels: { style: { colors: '#64748b' } } },
                 yaxis: { labels: { style: { colors: '#475569' } } }
             }).render();
         }
@@ -241,25 +215,62 @@
         document.getElementById('expand-chart-modal').classList.remove('hidden');
 
         if (expandedChartInstance) {
-            expandedChartInstance.destroy();
+            expandedChartInstance.destroy(); 
         }
 
-        const categories = menuData ? menuData.categories : ['Data'];
-        const actual = menuData ? menuData.actual : [0];
-        const forecast = menuData ? menuData.forecast : [0];
+        const categories = menuData ? [...menuData.categories] : ['Bulan 1', 'Bulan 2', 'Bulan 3'];
+        let actual = menuData ? [...menuData.actual] : [0, 0, 0];
+        let forecast = menuData ? [...menuData.forecast] : [0, 0, 0];
+
+        let lastActualIndex = -1;
+        for (let i = actual.length - 1; i >= 0; i--) {
+            if (actual[i] !== null && actual[i] !== undefined) {
+                lastActualIndex = i;
+                break;
+            }
+        }
+        
+        if (lastActualIndex !== -1) {
+            forecast[lastActualIndex] = actual[lastActualIndex];
+        }
 
         expandedChartInstance = new ApexCharts(document.querySelector('#expanded-large-chart'), {
             series: [
                 { name: 'Penjualan Aktual', data: actual },
                 { name: 'Prediksi AI', data: forecast }
             ],
-            chart: { type: 'line', height: '100%', width: '100%', toolbar: { show: true }, fontFamily: 'inherit' },
-            stroke: { curve: 'smooth', width: 4, dashArray: [0, 8] },
-            markers: { size: 6, hover: { size: 8 } },
+            chart: { 
+                type: 'line', 
+                height: '100%', 
+                width: '100%', 
+                toolbar: { show: true }, 
+                fontFamily: 'inherit',
+                parentHeightOffset: 0
+            },
+            stroke: { 
+                curve: 'smooth', 
+                width: [4, 4],
+                dashArray: [0, 8]
+            },
+            markers: { 
+                size: 6, 
+                hover: { size: 8 } 
+            },
             colors: [PALETTE.primary, PALETTE.accent],
-            xaxis: { categories: categories },
-            yaxis: { labels: { formatter: function(value) { return value.toLocaleString('id-ID'); } } },
-            legend: { position: 'top', horizontalAlign: 'right' }
+            xaxis: { 
+                categories: categories 
+            },
+            yaxis: { 
+                labels: { formatter: function(value) { return value.toLocaleString('id-ID'); } } 
+            },
+            legend: { 
+                position: 'bottom',
+                horizontalAlign: 'center',
+                offsetY: 8
+            },
+            grid: {
+                padding: { top: 20, right: 30, left: 10, bottom: 10 }
+            }
         });
 
         expandedChartInstance.render();
