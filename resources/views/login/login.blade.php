@@ -125,13 +125,11 @@
             <div class="w-full max-w-md">
 
                 <!-- Logo -->
-                <div class="text-center mb-10">
+                <div class="text-center mb-2">
 
-                    <h1 class="text-4xl font-black text-gray-900">
-                        SmartBranch BI
-                    </h1>
+                    <img src="{{ asset('favicon.png') }}" alt="Logo Nusantara Bites" class="rounded-full img-fluid mx-auto ">
 
-                    <p class="text-gray-500 mt-3">
+                    <p class="text-gray-500 ">
                         Login untuk mengakses dashboard Business Intelligence
                     </p>
 
