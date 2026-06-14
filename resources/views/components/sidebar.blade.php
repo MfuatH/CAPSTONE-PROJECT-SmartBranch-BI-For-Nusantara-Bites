@@ -1,9 +1,7 @@
 <aside class="w-64 flex flex-col h-screen border-r text-gray-500 shadow-xl z-20 flex-shrink-0" style="background:var(--card); border-right-color:var(--border); color:var(--text);">
     <div class="h-16 flex items-center px-6 mb-8 mt-4">
         <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-[#2563EB] flex items-center justify-center text-white font-bold text-lg">
-                N
-            </div>
+            <img src="{{ asset('favicon.png') }}" alt="Logo Nusantara Bites" class="w-16 h-16 object-contain">
             <div class="flex flex-col">
                 <span class="font-bold text-gray-900 leading-tight">SmartBranch BI</span>
                 <span class="text-[10px] text-primary tracking-wider uppercase">Nusantara Bites</span>
