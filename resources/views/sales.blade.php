@@ -26,10 +26,6 @@
                     <i data-lucide="upload" class="w-4 h-4"></i> Import Dataset
                 </button>
             </form>
-
-            <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium hover:border-[#D9A168] transition-colors shadow-sm">
-                <i data-lucide="download" class="w-4 h-4"></i> Ekspor CSV
-            </button>
         </div>
     </div>
 
