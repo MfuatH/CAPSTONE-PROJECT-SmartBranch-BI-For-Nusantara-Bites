@@ -113,7 +113,7 @@ class ForecastController extends Controller
                         $gagal++;
                     }
                 } catch (\Exception $e) {
-                    return back()->with('error', 'Koneksi ke server AI Python mati! Nyalain dulu uvicorn-nya wkwk.');
+                    return back()->with('error', 'Koneksi ke server AI Python tidak tersedia.');
                 }
             }
         }
