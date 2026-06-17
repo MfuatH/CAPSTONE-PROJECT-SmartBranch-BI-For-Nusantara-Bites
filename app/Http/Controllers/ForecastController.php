@@ -74,12 +74,13 @@ class ForecastController extends Controller
                 ];
 
                 try {
-                    $response = Http::post('http://127.0.0.1:8001/api/forecast', $payload);
+                    $apiUrl = env('AI_API_URL', 'http://127.0.0.1:8001') . '/api/forecast';
+                    $response = Http::post($apiUrl, $payload);
 
                     if ($response->successful()) {
                         $hasilAI = $response->json();
                         
-                        if ($hasilAI['status'] == 'success') {
+                        if (isset($hasilAI['status']) && $hasilAI['status'] == 'success') {
                             $predictedQty = $hasilAI['prediction'];
 
                             ForecastResult::create([
@@ -107,13 +108,13 @@ class ForecastController extends Controller
                             }
 
                         } else {
-                            $gagal++;
+                            return back()->with('error', 'Format JSON dari Python aneh: ' . json_encode($hasilAI));
                         }
                     } else {
-                        $gagal++;
+                        return back()->with('error', 'Sistem AI sedang menyiapkan kalkulasi data. Harap tunggu sekitar 30 detik, lalu coba klik Generate satu kali lagi.');
                     }
                 } catch (\Exception $e) {
-                    return back()->with('error', 'Koneksi ke server AI Python tidak tersedia.');
+                    return back()->with('error', 'Mesin peramalan AI sedang dipanaskan (Standby Mode). Harap tunggu sebentar dan coba klik Generate lagi.');
                 }
             }
         }
