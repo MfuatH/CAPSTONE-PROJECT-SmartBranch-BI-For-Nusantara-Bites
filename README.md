@@ -58,7 +58,6 @@ smartbranch-bi/
 │
 ├── laravel/     # Web Application
 ├── fastapi/     # Machine Learning API
-│
 └── README.md
 ```
 
