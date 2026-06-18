@@ -277,10 +277,10 @@ uvicorn main:app --host 0.0.0.0 --port 10000
 
 # 👥 Tim Pengembang
 
-- Backend Development
-- Machine Learning Development
-- Frontend Development
-- Project Management
+- Backend Development - Nur Kholis Yusuf Rabbani / APC284D6Y0539
+- Machine Learning Development - Shelo Rahma Sari / APC284D6X0139
+- Frontend Development - Achmad Diky Setiawan / APC284D6Y0558	
+- Project Management - Mohamat Fuat Hasan / APC284D6Y0553
 
 ---
 
